@@ -1,5 +1,9 @@
-#OS Files
+# OS Files
 *.DS_Store
+
+# eclipse files
+*.classpath
+*.project
 
 # Compiled class file
 *.class
