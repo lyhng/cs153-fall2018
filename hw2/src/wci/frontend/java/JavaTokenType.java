@@ -50,31 +50,57 @@ public enum JavaTokenType implements TokenType {
   STATIC,
   WHILE,
 
-  // Special symbols.
-  PLUS("+"),
-  MINUS("-"),
+  // Special Symbols
+  TILDE("~"),
+  EXCLAM("!"),
+  AT("@"),
+  PERCENT("%"),
+  CARET("^"),
+  AMPERSAND("&"),
   STAR("*"),
+  MINUS("-"),
+  PLUS("+"),
+  EQUAL("="),
+  VERTICAL_BAR("|"),
   SLASH("/"),
-  COLON_EQUALS(":="),
+  COLON(":"),
+  SEMICOLON(";"),
+  QUESTION("?"),
+  LESS_THAN("<"),
+  GREATER_THAN(">"),
   DOT("."),
   COMMA(","),
-  SEMICOLON(";"),
-  COLON(":"),
   QUOTE("'"),
-  EQUALS("="),
-  NOT_EQUALS("<>"),
-  LESS_THAN("<"),
-  LESS_EQUALS("<="),
-  GREATER_EQUALS(">="),
-  GREATER_THAN(">"),
+  DOUBLE_QUOTE("\""),
   LEFT_PAREN("("),
   RIGHT_PAREN(")"),
   LEFT_BRACKET("["),
   RIGHT_BRACKET("]"),
   LEFT_BRACE("{"),
   RIGHT_BRACE("}"),
-  UP_ARROW("^"),
-  DOT_DOT(".."),
+  PLUS_PLUS("++"),
+  MINUS_MINUS("--"),
+  LEFT_SHIFT("<<"),
+  RIGHT_SHIRFT(">>"),
+  LESS_EQUAL("<="),
+  GREATER_EQUAL(">="),
+  PLUS_EQUAL("+="),
+  MINUS_EQUAL("-="),
+  STAR_EQUAL("*="),
+  SLASH_EQUAL("/="),
+  EQUAL_EQUAL("=="),
+  VERTICAL_EQUAL("|="),
+  PERCENT_EQUAL("%="),
+  AMPERSAND_EQUAL("&="),
+  CARET_EQUAL("^="),
+  EXCLAM_EQUAL("!="),
+  LEFT_SHIFT_EQUAL("<<="),
+  RIGHT_SHIFT_EQUAL(">>="),
+  DOUBLE_VERTICAL("||"),
+  DOUBLE_AMPERSAND("&&"),
+  DOUBLE_SLASH("//"),
+  SLASH_STAR("/*"),
+  STAR_SLASH("*/"),
 
   IDENTIFIER,
   INTEGER,
@@ -86,8 +112,8 @@ public enum JavaTokenType implements TokenType {
   private static final int FIRST_RESERVED_INDEX = ABSTRACT.ordinal();
   private static final int LAST_RESERVED_INDEX = WHILE.ordinal();
 
-  private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
-  private static final int LAST_SPECIAL_INDEX = DOT_DOT.ordinal();
+  private static final int FIRST_SPECIAL_INDEX = TILDE.ordinal();
+  private static final int LAST_SPECIAL_INDEX = STAR_SLASH.ordinal();
   // Set of lower-cased Java reserved word text strings.
   public static HashSet<String> RESERVED_WORDS = new HashSet<String>();
   // Hash table of Java special symbols.  Each special symbol's text
