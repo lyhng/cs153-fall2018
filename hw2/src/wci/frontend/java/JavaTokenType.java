@@ -17,42 +17,38 @@ import java.util.Hashtable;
  * <p>For instructional purposes only. No warranties.
  */
 public enum JavaTokenType implements TokenType {
-  // Reserved words.
-  AND,
-  ARRAY,
-  BEGIN,
-  CASE,
-  CONST,
-  DIV,
-  DO,
-  DOWNTO,
+  // Java Reserve Words
+  ABSTRACT,
+  DOUBLE,
+  INT,
+  SUPER,
+  BREAK,
   ELSE,
-  END,
-  FILE,
+  LONG,
+  SWITCH,
+  CASE,
+  ENUM,
+  NATIVE,
+  CHAR,
+  EXTENDS,
+  RETURN,
+  THIS,
+  CLASS,
+  FLOAT,
+  SHORT,
+  THROW,
+  CONST,
   FOR,
-  FUNCTION,
+  PACKAGE,
+  VOID,
+  CONTINUE,
   GOTO,
+  PROTECTED,
+  VOLATILE,
+  DO,
   IF,
-  IN,
-  LABEL,
-  MOD,
-  NIL,
-  NOT,
-  OF,
-  OR,
-  PACKED,
-  PROCEDURE,
-  PROGRAM,
-  RECORD,
-  REPEAT,
-  SET,
-  THEN,
-  TO,
-  TYPE,
-  UNTIL,
-  VAR,
+  STATIC,
   WHILE,
-  WITH,
 
   // Special symbols.
   PLUS("+"),
@@ -87,8 +83,8 @@ public enum JavaTokenType implements TokenType {
   ERROR,
   END_OF_FILE;
 
-  private static final int FIRST_RESERVED_INDEX = AND.ordinal();
-  private static final int LAST_RESERVED_INDEX = WITH.ordinal();
+  private static final int FIRST_RESERVED_INDEX = ABSTRACT.ordinal();
+  private static final int LAST_RESERVED_INDEX = WHILE.ordinal();
 
   private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
   private static final int LAST_SPECIAL_INDEX = DOT_DOT.ordinal();
