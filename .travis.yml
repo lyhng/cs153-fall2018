@@ -12,4 +12,4 @@ before_install:
 jobs:
   include:
     - stage: format
-      script: cd $TRAVIS_BUILD_DIR && java -jar ~/.bin/gjf.jar --set-exit-if-changed $(find . -iname "*.java")
+      script: cd $TRAVIS_BUILD_DIR && java -jar ~/.bin/gjf.jar --dry-run --set-exit-if-changed $(find . -iname "*.java")
