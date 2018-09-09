@@ -19,6 +19,7 @@ public class JavaCharacterToken extends JavaToken {
   
 	//list of escape characters. 
 	//Index of string must correspond to correct character in the char array
+	// Used in this class and also JavaStringToken class
 	protected static final String ESCAPE_CHARACTERS = "\'\\nt\"";
 	protected static final char[] ESCAPE_CHAR 		= {'\'','\\','\n','\t','\"'};
 	
