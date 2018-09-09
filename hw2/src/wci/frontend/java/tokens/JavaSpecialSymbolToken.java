@@ -33,7 +33,7 @@ public class JavaSpecialSymbolToken extends JavaToken {
   private static String ALL_SPECIAL_CHARACTERS = "~!@%^&*-+=|/:;?<>.,'\"()[]{}";
 
   /** Special characters that may be followed by an equal sign ("="). */
-  private static String FOLLOWED_BY_EQUAL = "!%^&*-+=|/";
+  private static String FOLLOWED_BY_EQUAL = "<>!%^&*-+=|/";
 
   /** Special characters that may repeat it self once. */
   private static String REPEATABLE_CHARACTERS = "&+-=|/<>";
