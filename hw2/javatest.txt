@@ -35,7 +35,16 @@ What?
 
 // reserved words
 while
+class
+
+// identifiers
 WHiLE
 CaSE
 clASS
-class
+i_am_identifier
+ANOTHER_IdEnTiFIER
+_START_WITH_UNDERSCORE___
+$DOLLAR_START
+DOLLAR$$$$$$$SIGN
+NUMBER111111
+1NOT_IDENTIFIER
