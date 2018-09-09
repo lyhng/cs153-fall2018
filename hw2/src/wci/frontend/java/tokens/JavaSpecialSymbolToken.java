@@ -30,18 +30,13 @@ public class JavaSpecialSymbolToken extends JavaToken {
   }
 
   /** All characters that can be a special symbol. */
-  static String ALL_SPECIAL_CHARACTERS = "~!@%^&*-+=|/:;?<>.,'\"()[]{}";
-
-  //  /**
-  //   * Special tokens that cannot followed by any other special characters.
-  //   */
-  //  static String SINGLE_SPECIAL_CHARACTER = "~@:;?.,'\"()[]{}";
+  private static String ALL_SPECIAL_CHARACTERS = "~!@%^&*-+=|/:;?<>.,'\"()[]{}";
 
   /** Special characters that may be followed by an equal sign ("="). */
-  static String FOLLOWED_BY_EQUAL = "!%^&*-+=|/";
+  private static String FOLLOWED_BY_EQUAL = "!%^&*-+=|/";
 
   /** Special characters that may repeat it self once. */
-  static String REPEATABLE_CHARACTERS = "&+-=|/<>";
+  private static String REPEATABLE_CHARACTERS = "&+-=|/<>";
 
   /**
    * Extract a Java special symbol token from the source.
