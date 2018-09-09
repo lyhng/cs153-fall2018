@@ -49,7 +49,7 @@ public class JavaWordToken extends JavaToken {
 
     // Is it a reserved word or an identifier?
     type =
-        (RESERVED_WORDS.contains(text.toLowerCase()))
+        (RESERVED_WORDS.contains(text))
             ? JavaTokenType.valueOf(text.toUpperCase()) // reserved word
             : IDENTIFIER; // identifier
   }
