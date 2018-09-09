@@ -4,14 +4,16 @@ import wci.frontend.Source;
 import wci.frontend.java.JavaToken;
 
 import static wci.frontend.Source.EOF;
-import static wci.frontend.java.JavaErrorCode.UNEXPECTED_EOF;
+import static wci.frontend.java.JavaErrorCode.INVALID_CHARACTER;
 import static wci.frontend.java.JavaTokenType.ERROR;
 import static wci.frontend.java.JavaTokenType.CHARACTER;
 
 /**
  *
+ *
+ * <h1>JavaCharacterToken</h1>
+ *
  * <p>Java character tokens.
- * 
  */
 public class JavaCharacterToken extends JavaToken {
   /**
@@ -36,24 +38,52 @@ public class JavaCharacterToken extends JavaToken {
     char currentChar = nextChar(); // consume initial quote
     textBuffer.append('\'');
 
-    if (currentChar == '\\') { //Consume escape char
+    // if backslash
+    if (currentChar == '\\') {
       textBuffer.append(currentChar);
-      currentChar = nextChar();
-      if (currentChar == 'n' || currentChar == 't') { //Handle special chars
-        textBuffer.append(currentChar);
-        valueBuffer.append("\\" + currentChar);
-      }
-      else { // interpret next char literally
+      currentChar = nextChar(); // consume backslash
+
+      // escape characters
+      if (currentChar == '\'') {
         textBuffer.append(currentChar);
         valueBuffer.append(currentChar);
+      } else if (currentChar == 'n') {
+        textBuffer.append(currentChar);
+        valueBuffer.append('\n');
+      } else if (currentChar == 't') {
+        textBuffer.append(currentChar);
+        valueBuffer.append('\t');
+      } else if (currentChar == '\"') {
+          textBuffer.append(currentChar);
+          valueBuffer.append('\"');
+      } else if (currentChar == '\\') {
+    	  
+        textBuffer.append(currentChar);
+        valueBuffer.append('\\');
+      } else { // invalid backslash character
+        type = ERROR;
+        value = INVALID_CHARACTER;
+        do {
+          textBuffer.append(currentChar);
+          currentChar = nextChar();
+        } while (currentChar != '\'');
+        textBuffer.append(currentChar);
+        currentChar = nextChar();       
+        text = textBuffer.toString();
+             
+        return;
       }
+      currentChar = nextChar(); // consume character
     }
-    else { //Normal case no escape character
+
+    // regular character
+    else {
       textBuffer.append(currentChar);
       valueBuffer.append(currentChar);
+      currentChar = nextChar(); // consume character
     }
-    
-    currentChar = nextChar();
+
+    // closing quote
     if (currentChar == '\'') {
       nextChar(); // consume final quote
       textBuffer.append('\'');
@@ -62,7 +92,14 @@ public class JavaCharacterToken extends JavaToken {
       value = valueBuffer.toString();
     } else {
       type = ERROR;
-      value = UNEXPECTED_EOF;
+      value = INVALID_CHARACTER;
+
+      // loop until found closing '
+      do {
+        currentChar = nextChar();
+        textBuffer.append(currentChar);
+      } while (currentChar != '\'');
+      currentChar = nextChar();
     }
 
     text = textBuffer.toString();
