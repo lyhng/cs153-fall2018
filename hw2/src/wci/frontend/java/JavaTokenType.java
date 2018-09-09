@@ -103,6 +103,7 @@ public enum JavaTokenType implements TokenType {
   STAR_SLASH("*/"),
 
   IDENTIFIER,
+  CHARACTER,
   INTEGER,
   REAL,
   STRING,

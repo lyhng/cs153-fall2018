@@ -55,7 +55,9 @@ public class JavaScanner extends Scanner {
     } else if (Character.isDigit(currentChar)) {
       token = new JavaNumberToken(source);
     } else if (currentChar == '\'') {
-      token = new JavaStringToken(source);
+      token = new JavaCharacterToken(source);
+    } else if (currentChar == '"') {
+      token = new JavaStringToken(source);   
     } else if (JavaTokenType.SPECIAL_SYMBOLS.containsKey(Character.toString(currentChar))) {
       token = new JavaSpecialSymbolToken(source);
     } else {
