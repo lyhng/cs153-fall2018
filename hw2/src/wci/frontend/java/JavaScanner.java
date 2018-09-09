@@ -15,14 +15,11 @@ import static wci.frontend.java.JavaErrorCode.INVALID_CHARACTER;
  *
  * <h1>JavaScanner</h1>
  *
- * <p>
- * The Java scanner.
+ * <p>The Java scanner.
  *
- * <p>
- * Copyright (c) 2009 by Ronald Mak
+ * <p>Copyright (c) 2009 by Ronald Mak
  *
- * <p>
- * For instructional purposes only. No warranties.
+ * <p>For instructional purposes only. No warranties.
  */
 public class JavaScanner extends Scanner {
   /**
@@ -80,7 +77,7 @@ public class JavaScanner extends Scanner {
       // Start of a comment?
       if (currentChar == '/' && source.peekChar() == '*') {
         currentChar = nextChar();
-        
+
         // start of /* comment
         while (true) {
           currentChar = nextChar();
@@ -93,18 +90,17 @@ public class JavaScanner extends Scanner {
           }
         }
       }
-      
+
       // start of double back slash comment
       else if (currentChar == '/' && source.peekChar() == '/') {
         do {
           currentChar = nextChar(); // consume comment characters
         } while (currentChar != EOL);
       }
-      
+
       // divide char. Not a comment
-      else if (currentChar == '/')
-        break;
-      
+      else if (currentChar == '/') break;
+
       // Not a comment.
       else {
         currentChar = nextChar(); // consume whitespace character

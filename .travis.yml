@@ -1,0 +1,15 @@
+language: java
+jdk: oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.bin
+
+before_install:
+  - mkdir -p ~/.bin
+  - wget https://github.com/google/google-java-format/releases/download/google-java-format-1.6/google-java-format-1.6-all-deps.jar -O ~/.bin/gjf.jar
+
+jobs:
+  include:
+    - stage: format
+      script: cd $TRAVIS_BUILD_DIR && java -jar ~/.bin/gjf.jar --dry-run --skip-sorting-imports --set-exit-if-changed $(find . -iname "*.java")
