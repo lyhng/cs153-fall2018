@@ -15,11 +15,14 @@ import static wci.frontend.java.JavaErrorCode.INVALID_CHARACTER;
  *
  * <h1>JavaScanner</h1>
  *
- * <p>The Java scanner.
+ * <p>
+ * The Java scanner.
  *
- * <p>Copyright (c) 2009 by Ronald Mak
+ * <p>
+ * Copyright (c) 2009 by Ronald Mak
  *
- * <p>For instructional purposes only. No warranties.
+ * <p>
+ * For instructional purposes only. No warranties.
  */
 public class JavaScanner extends Scanner {
   /**
@@ -73,33 +76,33 @@ public class JavaScanner extends Scanner {
 
     while (Character.isWhitespace(currentChar) || (currentChar == '/')) {
       // Start of a comment?
-      if (currentChar == '/') {
+      if (currentChar == '/' && source.peekChar() == '*') {
         currentChar = nextChar();
+        
+        // start of /* comment
+        while (true) {
+          currentChar = nextChar();
 
-        // start of * comment
-        if (currentChar == '*') {
-          while (true) {
-            currentChar = nextChar();
-
-            // if found */ sequence break from loop
-            if (currentChar == '*' && source.peekChar() == '/') break;
-          }
-
-          // Found closing '*'?
-          if (currentChar == '*') {
+          // if found */ sequence break from loop
+          if (currentChar == '*' && source.peekChar() == '/') {
             currentChar = nextChar(); // consume the '*'
             currentChar = nextChar(); // consume the '/'
+            break;
           }
         }
-
-        // start of double back slash comment
-        else if (currentChar == '/') {
-          do {
-            currentChar = nextChar(); // consume comment characters
-          } while (currentChar != EOL);
-        }
-
       }
+      
+      // start of double back slash comment
+      else if (currentChar == '/' && source.peekChar() == '/') {
+        do {
+          currentChar = nextChar(); // consume comment characters
+        } while (currentChar != EOL);
+      }
+      
+      // divide char. Not a comment
+      else if (currentChar == '/')
+        break;
+      
       // Not a comment.
       else {
         currentChar = nextChar(); // consume whitespace character
