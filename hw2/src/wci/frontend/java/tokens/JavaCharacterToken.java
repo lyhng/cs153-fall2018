@@ -16,7 +16,13 @@ import static wci.frontend.java.JavaTokenType.CHARACTER;
  * <p>Java character tokens.
  */
 public class JavaCharacterToken extends JavaToken {
-  /**
+  
+	//list of escape characters. 
+	//Index of string must correspond to correct character in the char array
+	protected static final String ESCAPE_CHARACTERS = "\'\\nt\"";
+	protected static final char[] ESCAPE_CHAR 		= {'\'','\\','\n','\t','\"'};
+	
+	/**
    * Constructor.
    *
    * @param source the source from where to fetch the token's characters.
@@ -34,7 +40,6 @@ public class JavaCharacterToken extends JavaToken {
   protected void extract() throws Exception {
     StringBuilder textBuffer = new StringBuilder();
     StringBuilder valueBuffer = new StringBuilder();
-
     char currentChar = nextChar(); // consume initial quote
     textBuffer.append('\'');
 
@@ -42,24 +47,11 @@ public class JavaCharacterToken extends JavaToken {
     if (currentChar == '\\') {
       textBuffer.append(currentChar);
       currentChar = nextChar(); // consume backslash
-
+      
       // escape characters
-      if (currentChar == '\'') {
-        textBuffer.append(currentChar);
-        valueBuffer.append(currentChar);
-      } else if (currentChar == 'n') {
-        textBuffer.append(currentChar);
-        valueBuffer.append('\n');
-      } else if (currentChar == 't') {
-        textBuffer.append(currentChar);
-        valueBuffer.append('\t');
-      } else if (currentChar == '\"') {
-          textBuffer.append(currentChar);
-          valueBuffer.append('\"');
-      } else if (currentChar == '\\') {
-    	  
-        textBuffer.append(currentChar);
-        valueBuffer.append('\\');
+      if (ESCAPE_CHARACTERS.contains(Character.toString(currentChar))) {
+        textBuffer.append(currentChar);   
+        valueBuffer.append(ESCAPE_CHAR[ESCAPE_CHARACTERS.indexOf(currentChar)]);
       } else { // invalid backslash character
         type = ERROR;
         value = INVALID_CHARACTER;

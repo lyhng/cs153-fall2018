@@ -8,6 +8,8 @@ import static wci.frontend.java.JavaErrorCode.INVALID_CHARACTER;
 import static wci.frontend.java.JavaErrorCode.UNEXPECTED_EOF;
 import static wci.frontend.java.JavaTokenType.ERROR;
 import static wci.frontend.java.JavaTokenType.STRING;
+import static wci.frontend.java.tokens.JavaCharacterToken.ESCAPE_CHAR;
+import static wci.frontend.java.tokens.JavaCharacterToken.ESCAPE_CHARACTERS;
 
 /**
  *
@@ -55,21 +57,9 @@ public class JavaStringToken extends JavaToken {
         textBuffer.append(currentChar);
         currentChar = nextChar();
 
-        if (currentChar == '\'') {
+        if (ESCAPE_CHARACTERS.contains(Character.toString(currentChar))) {
           textBuffer.append(currentChar);
-          valueBuffer.append(currentChar);
-        } else if (currentChar == 'n') {
-          textBuffer.append(currentChar);
-          valueBuffer.append('\n');
-        } else if (currentChar == '\"') {
-          textBuffer.append(currentChar);
-          valueBuffer.append('\"');
-        } else if (currentChar == 't') {
-          textBuffer.append(currentChar);
-          valueBuffer.append('\t');
-        } else if (currentChar == '\\') {
-          textBuffer.append(currentChar);
-          valueBuffer.append('\\');
+          valueBuffer.append(ESCAPE_CHAR[ESCAPE_CHARACTERS.indexOf(currentChar)]);
         } else { // invalid escape character
           type = ERROR;
           value = INVALID_CHARACTER;
