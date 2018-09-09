@@ -29,6 +29,15 @@ public class JavaSpecialSymbolToken extends JavaToken {
     super(source);
   }
 
+  /** All characters that can be a special symbol. */
+  private static String ALL_SPECIAL_CHARACTERS = "~!@%^&*-+=|/:;?<>.,'\"()[]{}";
+
+  /** Special characters that may be followed by an equal sign ("="). */
+  private static String FOLLOWED_BY_EQUAL = "!%^&*-+=|/";
+
+  /** Special characters that may repeat it self once. */
+  private static String REPEATABLE_CHARACTERS = "&+-=|/<>";
+
   /**
    * Extract a Java special symbol token from the source.
    *
@@ -36,99 +45,36 @@ public class JavaSpecialSymbolToken extends JavaToken {
    */
   protected void extract() throws Exception {
     char currentChar = currentChar();
-
     text = Character.toString(currentChar);
     type = null;
 
-    switch (currentChar) {
+    if (ALL_SPECIAL_CHARACTERS.contains(text)) {
+      nextChar();
 
-        // Single-character special symbols.
-      case '+':
-      case '-':
-      case '*':
-      case '/':
-      case ',':
-      case ';':
-      case '\'':
-      case '=':
-      case '(':
-      case ')':
-      case '[':
-      case ']':
-      case '{':
-      case '}':
-      case '^':
-        {
-          nextChar(); // consume character
-          break;
+      if (FOLLOWED_BY_EQUAL.contains(text) && currentChar() == '=') {
+        text += currentChar();
+        nextChar();
+      } else if (REPEATABLE_CHARACTERS.contains(text) && currentChar() == currentChar) {
+        text += currentChar();
+        nextChar();
+
+        // >>= and <<=
+        if ((currentChar == '<' || currentChar == '>') && currentChar() == '=') {
+          text += currentChar();
+          nextChar();
         }
+      } else if (currentChar == '/' && currentChar() == '*'
+          || currentChar == '*' && currentChar() == '/') {
+        // /* and */
+        text += currentChar();
+        nextChar();
+      }
 
-        // : or :=
-      case ':':
-        {
-          currentChar = nextChar(); // consume ':';
-
-          if (currentChar == '=') {
-            text += currentChar;
-            nextChar(); // consume '='
-          }
-
-          break;
-        }
-
-        // < or <= or <>
-      case '<':
-        {
-          currentChar = nextChar(); // consume '<';
-
-          if (currentChar == '=') {
-            text += currentChar;
-            nextChar(); // consume '='
-          } else if (currentChar == '>') {
-            text += currentChar;
-            nextChar(); // consume '>'
-          }
-
-          break;
-        }
-
-        // > or >=
-      case '>':
-        {
-          currentChar = nextChar(); // consume '>';
-
-          if (currentChar == '=') {
-            text += currentChar;
-            nextChar(); // consume '='
-          }
-
-          break;
-        }
-
-        // . or ..
-      case '.':
-        {
-          currentChar = nextChar(); // consume '.';
-
-          if (currentChar == '.') {
-            text += currentChar;
-            nextChar(); // consume '.'
-          }
-
-          break;
-        }
-
-      default:
-        {
-          nextChar(); // consume bad character
-          type = ERROR;
-          value = INVALID_CHARACTER;
-        }
-    }
-
-    // Set the type if it wasn't an error.
-    if (type == null) {
       type = SPECIAL_SYMBOLS.get(text);
+    } else {
+      nextChar();
+      type = ERROR;
+      value = INVALID_CHARACTER;
     }
   }
 }

@@ -40,7 +40,7 @@ public class JavaWordToken extends JavaToken {
 
     // Get the word characters (letter or digit).  The scanner has
     // already determined that the first character is a letter.
-    while (Character.isLetterOrDigit(currentChar)) {
+    while (Character.isLetterOrDigit(currentChar) || currentChar == '_' || currentChar == '$') {
       textBuffer.append(currentChar);
       currentChar = nextChar(); // consume character
     }
@@ -49,7 +49,7 @@ public class JavaWordToken extends JavaToken {
 
     // Is it a reserved word or an identifier?
     type =
-        (RESERVED_WORDS.contains(text.toLowerCase()))
+        (RESERVED_WORDS.contains(text))
             ? JavaTokenType.valueOf(text.toUpperCase()) // reserved word
             : IDENTIFIER; // identifier
   }

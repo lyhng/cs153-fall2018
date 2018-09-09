@@ -26,7 +26,25 @@ What?
 "It's Friday!"
 ""  "\""
 
-// Special symbol tokens
-+ - * / := . , ; : = <> < <= >= > ( ) [ ] { } } ^ ..
-<<=  >>=
-:=<>=<==>>===
+// Java special symbols
+~ ! @ % ^ & * - + =
+| / : ; ? < > . ,
+( ) [ ] { }
+++ -- << >> <= >= += -= *= /=
+== |= %= &= ^= != <<= >>= || &&
+
+// reserved words
+while
+class
+
+// identifiers
+WHiLE
+CaSE
+clASS
+i_am_identifier
+ANOTHER_IdEnTiFIER
+_START_WITH_UNDERSCORE___
+$DOLLAR_START
+DOLLAR$$$$$$$SIGN
+NUMBER111111
+1NOT_IDENTIFIER
