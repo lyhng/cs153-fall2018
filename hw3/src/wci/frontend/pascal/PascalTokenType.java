@@ -19,7 +19,7 @@ public enum PascalTokenType implements TokenType
     AND, ARRAY, BEGIN, CASE, CONST, DIV, DO, DOWNTO, ELSE, END,
     FILE, FOR, FUNCTION, GOTO, IF, IN, LABEL, MOD, NIL, NOT,
     OF, OR, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, SET,
-    THEN, TO, TYPE, UNTIL, VAR, WHILE, WITH,
+    THEN, TO, TYPE, UNTIL, VAR, WHILE, WITH, WHEN, OTHERWISE,
 
     // Special symbols.
     PLUS("+"), MINUS("-"), STAR("*"), SLASH("/"), COLON_EQUALS(":="),
@@ -33,7 +33,7 @@ public enum PascalTokenType implements TokenType
     ERROR, END_OF_FILE;
 
     private static final int FIRST_RESERVED_INDEX = AND.ordinal();
-    private static final int LAST_RESERVED_INDEX  = WITH.ordinal();
+    private static final int LAST_RESERVED_INDEX  = OTHERWISE.ordinal();
 
     private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
     private static final int LAST_SPECIAL_INDEX  = DOT_DOT.ordinal();
