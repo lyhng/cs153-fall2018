@@ -52,7 +52,7 @@ public enum JavaTokenType implements TokenType {
 
   // Special Symbols
   TILDE("~"),
-  EXCLAM("!"),
+  EXCLAIM("!"),
   AT("@"),
   PERCENT("%"),
   CARET("^"),
@@ -81,7 +81,7 @@ public enum JavaTokenType implements TokenType {
   PLUS_PLUS("++"),
   MINUS_MINUS("--"),
   LEFT_SHIFT("<<"),
-  RIGHT_SHIRFT(">>"),
+  RIGHT_SHIFT(">>"),
   LESS_EQUAL("<="),
   GREATER_EQUAL(">="),
   PLUS_EQUAL("+="),
@@ -93,7 +93,7 @@ public enum JavaTokenType implements TokenType {
   PERCENT_EQUAL("%="),
   AMPERSAND_EQUAL("&="),
   CARET_EQUAL("^="),
-  EXCLAM_EQUAL("!="),
+  EXCLAIM_EQUAL("!="),
   LEFT_SHIFT_EQUAL("<<="),
   RIGHT_SHIFT_EQUAL(">>="),
   DOUBLE_VERTICAL("||"),
@@ -116,11 +116,11 @@ public enum JavaTokenType implements TokenType {
   private static final int FIRST_SPECIAL_INDEX = TILDE.ordinal();
   private static final int LAST_SPECIAL_INDEX = STAR_SLASH.ordinal();
   // Set of lower-cased Java reserved word text strings.
-  public static HashSet<String> RESERVED_WORDS = new HashSet<String>();
+  public static HashSet<String> RESERVED_WORDS = new HashSet<>();
   // Hash table of Java special symbols.  Each special symbol's text
   // is the key to its Java token type.
   public static Hashtable<String, JavaTokenType> SPECIAL_SYMBOLS =
-      new Hashtable<String, JavaTokenType>();
+      new Hashtable<>();
 
   static {
     JavaTokenType values[] = JavaTokenType.values();
