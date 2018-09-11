@@ -10,22 +10,22 @@ import static wci.frontend.java.JavaTokenType.RESERVED_WORDS;
 /**
  *
  *
- * <h1>JavaWordToken</h1>
+ * <h1>JavaIdentifierToken</h1>
  *
- * <p>Java word tokens (identifiers and reserved words).
+ * <p>Java identifier tokens (identifiers and reserved words).
  *
  * <p>Copyright (c) 2009 by Ronald Mak
  *
  * <p>For instructional purposes only. No warranties.
  */
-public class JavaWordToken extends JavaToken {
+public class JavaIdentifierToken extends JavaToken {
   /**
    * Constructor.
    *
    * @param source the source from where to fetch the token's characters.
    * @throws Exception if an error occurred.
    */
-  public JavaWordToken(Source source) throws Exception {
+  public JavaIdentifierToken(Source source) throws Exception {
     super(source);
   }
 

@@ -48,7 +48,7 @@ public class JavaScanner extends Scanner {
     if (currentChar == EOF) {
       token = new EofToken(source);
     } else if (Character.isLetter(currentChar) || currentChar == '_' || currentChar == '$') {
-      token = new JavaWordToken(source);
+      token = new JavaIdentifierToken(source);
     } else if (Character.isDigit(currentChar)) {
       token = new JavaNumberToken(source);
     } else if (currentChar == '\'') {
