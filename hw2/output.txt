@@ -1,0 +1,163 @@
+001 /* This is a comment. */
+002 // So is this.
+003 
+004 /* Here's a comment
+005    that spans several
+006    source lines. */
+007 
+008 Two/*comments in*//***a row***/ here.
+>>> IDENTIFIER      line=008, pos= 0, text="Two"
+>>> IDENTIFIER      line=008, pos=32, text="here"
+>>> DOT             line=008, pos=36, text="."
+009 /* This is /* not a nested comment. */
+010 // Nor is /* this */ one.
+011 
+012 { Not a comment. }
+>>> LEFT_BRACE      line=012, pos= 0, text="{"
+>>> IDENTIFIER      line=012, pos= 2, text="Not"
+>>> IDENTIFIER      line=012, pos= 6, text="a"
+>>> IDENTIFIER      line=012, pos= 8, text="comment"
+>>> DOT             line=012, pos=15, text="."
+>>> RIGHT_BRACE     line=012, pos=17, text="}"
+013 
+014 // Word tokens
+015 Hello world
+>>> IDENTIFIER      line=015, pos= 0, text="Hello"
+>>> IDENTIFIER      line=015, pos= 6, text="world"
+016 Abstract abstract ABSTRACT aBsTrAcT
+>>> IDENTIFIER      line=016, pos= 0, text="Abstract"
+>>> ABSTRACT        line=016, pos= 9, text="abstract"
+>>> IDENTIFIER      line=016, pos=18, text="ABSTRACT"
+>>> IDENTIFIER      line=016, pos=27, text="aBsTrAcT"
+017 What?
+>>> IDENTIFIER      line=017, pos= 0, text="What"
+>>> QUESTION        line=017, pos= 4, text="?"
+018 
+019 // Character tokens
+020 'x' 'A' '\'' 'a' '\n' '\t' '\\'
+>>> CHARACTER       line=020, pos= 0, text="'x'"
+>>>                 value=x
+>>> CHARACTER       line=020, pos= 4, text="'A'"
+>>>                 value=A
+>>> CHARACTER       line=020, pos= 8, text="'\''"
+>>>                 value='
+>>> CHARACTER       line=020, pos=13, text="'a'"
+>>>                 value=a
+>>> CHARACTER       line=020, pos=17, text="'\n'"
+>>>                 value=
+
+>>> CHARACTER       line=020, pos=22, text="'\t'"
+>>>                 value=  
+>>> CHARACTER       line=020, pos=27, text="'\\'"
+>>>                 value=\
+021 
+022 // String tokens
+023 "Hello, world."
+>>> STRING          line=023, pos= 0, text=""Hello, world.""
+>>>                 value="Hello, world."
+024 "Hello,\tworld!"
+>>> STRING          line=024, pos= 0, text=""Hello,\tworld!""
+>>>                 value="Hello,   world!"
+025 "Hello,\n\"world!\""
+>>> STRING          line=025, pos= 0, text=""Hello,\n\"world!\"""
+>>>                 value="Hello,
+"world!""
+026 "It's Friday!"
+>>> STRING          line=026, pos= 0, text=""It's Friday!""
+>>>                 value="It's Friday!"
+027 ""  "\""
+>>> STRING          line=027, pos= 0, text=""""
+>>>                 value=""
+>>> STRING          line=027, pos= 4, text=""\"""
+>>>                 value="""
+028 
+029 // Java special symbols
+030 ~ ! @ % ^ & * - + =
+>>> TILDE           line=030, pos= 0, text="~"
+>>> EXCLAIM         line=030, pos= 2, text="!"
+>>> AT              line=030, pos= 4, text="@"
+>>> PERCENT         line=030, pos= 6, text="%"
+>>> CARET           line=030, pos= 8, text="^"
+>>> AMPERSAND       line=030, pos=10, text="&"
+>>> STAR            line=030, pos=12, text="*"
+>>> MINUS           line=030, pos=14, text="-"
+>>> PLUS            line=030, pos=16, text="+"
+>>> EQUAL           line=030, pos=18, text="="
+031 | / : ; ? < > . ,
+>>> VERTICAL_BAR    line=031, pos= 0, text="|"
+>>> SLASH           line=031, pos= 2, text="/"
+>>> COLON           line=031, pos= 4, text=":"
+>>> SEMICOLON       line=031, pos= 6, text=";"
+>>> QUESTION        line=031, pos= 8, text="?"
+>>> LESS_THAN       line=031, pos=10, text="<"
+>>> GREATER_THAN    line=031, pos=12, text=">"
+>>> DOT             line=031, pos=14, text="."
+>>> COMMA           line=031, pos=16, text=","
+032 ( ) [ ] { }
+>>> LEFT_PAREN      line=032, pos= 0, text="("
+>>> RIGHT_PAREN     line=032, pos= 2, text=")"
+>>> LEFT_BRACKET    line=032, pos= 4, text="["
+>>> RIGHT_BRACKET   line=032, pos= 6, text="]"
+>>> LEFT_BRACE      line=032, pos= 8, text="{"
+>>> RIGHT_BRACE     line=032, pos=10, text="}"
+033 ++ -- << >> <= >= += -= *= /=
+>>> PLUS_PLUS       line=033, pos= 0, text="++"
+>>> MINUS_MINUS     line=033, pos= 3, text="--"
+>>> LEFT_SHIFT      line=033, pos= 6, text="<<"
+>>> RIGHT_SHIFT     line=033, pos= 9, text=">>"
+>>> LESS_EQUAL      line=033, pos=12, text="<="
+>>> GREATER_EQUAL   line=033, pos=15, text=">="
+>>> PLUS_EQUAL      line=033, pos=18, text="+="
+>>> MINUS_EQUAL     line=033, pos=21, text="-="
+>>> STAR_EQUAL      line=033, pos=24, text="*="
+>>> SLASH_EQUAL     line=033, pos=27, text="/="
+034 == |= %= &= ^= != <<= >>= || &&
+>>> EQUAL_EQUAL     line=034, pos= 0, text="=="
+>>> VERTICAL_EQUAL  line=034, pos= 3, text="|="
+>>> PERCENT_EQUAL   line=034, pos= 6, text="%="
+>>> AMPERSAND_EQUAL line=034, pos= 9, text="&="
+>>> CARET_EQUAL     line=034, pos=12, text="^="
+>>> EXCLAIM_EQUAL   line=034, pos=15, text="!="
+>>> LEFT_SHIFT_EQUAL line=034, pos=18, text="<<="
+>>> RIGHT_SHIFT_EQUAL line=034, pos=22, text=">>="
+>>> DOUBLE_VERTICAL line=034, pos=26, text="||"
+>>> DOUBLE_AMPERSAND line=034, pos=29, text="&&"
+035 
+036 // reserved words
+037 while
+>>> WHILE           line=037, pos= 0, text="while"
+038 class
+>>> CLASS           line=038, pos= 0, text="class"
+039 
+040 // identifiers
+041 WHiLE
+>>> IDENTIFIER      line=041, pos= 0, text="WHiLE"
+042 CaSE
+>>> IDENTIFIER      line=042, pos= 0, text="CaSE"
+043 clASS
+>>> IDENTIFIER      line=043, pos= 0, text="clASS"
+044 i_am_identifier
+>>> IDENTIFIER      line=044, pos= 0, text="i_am_identifier"
+045 ANOTHER_IdEnTiFIER
+>>> IDENTIFIER      line=045, pos= 0, text="ANOTHER_IdEnTiFIER"
+046 _START_WITH_UNDERSCORE___
+>>> IDENTIFIER      line=046, pos= 0, text="_START_WITH_UNDERSCORE___"
+047 $DOLLAR_START
+>>> IDENTIFIER      line=047, pos= 0, text="$DOLLAR_START"
+048 DOLLAR$$$$$$$SIGN
+>>> IDENTIFIER      line=048, pos= 0, text="DOLLAR$$$$$$$SIGN"
+049 NUMBER111111
+>>> IDENTIFIER      line=049, pos= 0, text="NUMBER111111"
+050 1NOT_IDENTIFIER
+>>> INTEGER         line=050, pos= 0, text="1"
+>>>                 value=1
+>>> IDENTIFIER      line=050, pos= 1, text="NOT_IDENTIFIER"
+
+                  50 source lines.
+                   0 syntax errors.
+                0.03 seconds total parsing time.
+
+                   0 statements executed.
+                   0 runtime errors.
+                0.00 seconds total execution time.
+                
