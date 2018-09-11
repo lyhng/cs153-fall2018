@@ -38,6 +38,7 @@ public class WhenStatementParser extends StatementParser {
 
   static {
     THEN_SET.add(THEN);
+    THEN_SET.add(ARROW);
     THEN_SET.addAll(StatementParser.STMT_FOLLOW_SET);
   }
 
@@ -51,24 +52,58 @@ public class WhenStatementParser extends StatementParser {
   public ICodeNode parse(Token token) throws Exception {
     token = nextToken(); // consume the WHEN
 
-    // Create an IF node.
     ICodeNode ifNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.IF);
 
+    parseRecurse(token, ifNode);
+
+    return ifNode;
+  }
+
+  public void parseRecurse(Token token, ICodeNode ifNode2) throws Exception {
+    // Create an IF node.
+
+    ICodeNode ifNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.IF);
+    ifNode2.addChild(ifNode);
     // Parse the expression.
     // The IF node adopts the expression subtree as its first child.
     ExpressionParser expressionParser = new ExpressionParser(this);
     StatementParser statementParser = new StatementParser(this);
 
-    do {
+    // Look for an OTHERWISE.
+    if (token.getType() == OTHERWISE) {
+      
+      token = nextToken(); // consume the OTHERWISE
+
+      if (token.getType() == ARROW) {
+        token = nextToken(); // consume the THEN
+      } else {
+        errorHandler.flag(token, MISSING_ARROW, this);
+      }
+
+      // Parse the ELSE statement.
+      // The IF node adopts the statement subtree as its third child.
+      ifNode.addChild(statementParser.parse(token));
+
+      token = currentToken();
+
+      if (token.getType() == END) {
+        token = nextToken(); // consume the END
+      } else {
+        errorHandler.flag(token, MISSING_END, this);
+      }
+
+      return;
+
+    } else {
 
       ifNode.addChild(expressionParser.parse(token));
 
       // Synchronize at the THEN.
       token = synchronize(THEN_SET);
-      if (token.getType() == THEN) {
+      if (token.getType() == ARROW) {
         token = nextToken(); // consume the THEN
       } else {
-        errorHandler.flag(token, MISSING_THEN, this);
+        errorHandler.flag(token, MISSING_ARROW, this);
       }
 
       // Parse the THEN statement.
@@ -82,31 +117,8 @@ public class WhenStatementParser extends StatementParser {
       }
 
       token = nextToken();
-    } while (token.getType() != OTHERWISE);
 
-    // Look for an OTHERWISE.
-    if (token.getType() == OTHERWISE) {
-      token = nextToken(); // consume the OTHERWISE
-
-      // Parse the ELSE statement.
-      // The IF node adopts the statement subtree as its third child.
-      ifNode.addChild(statementParser.parse(token));
+      parseRecurse(token, ifNode);
     }
-    
-    token = currentToken();
-
-    if (token.getType() == END) {
-      token = nextToken(); // consume the END
-    } else {
-      errorHandler.flag(token, MISSING_END, this);
-    }
-
-    if (token.getType() == SEMICOLON) {
-      token = nextToken(); // consume semicolon
-    } else {
-      errorHandler.flag(token, MISSING_SEMICOLON, this);
-    }
-
-    return ifNode;
   }
 }

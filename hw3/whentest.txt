@@ -2,10 +2,10 @@ BEGIN
     i := 3;
     
     WHEN
-        i = 1 THEN f := 10;
-        i = 2 THEN f := 20;
-        i = 3 THEN f := 30;
-        i = 4 THEN f := 40;
-        OTHERWISE f := -1
+        i = 1 => f := 10;
+        i = 2 => f := 20;
+        i = 3 => f := 30;
+        i = 4 => f := 40;
+        OTHERWISE => f := -1
     END;
 END.
