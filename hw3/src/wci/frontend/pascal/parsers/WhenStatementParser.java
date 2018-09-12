@@ -53,17 +53,12 @@ public class WhenStatementParser extends StatementParser {
     token = nextToken(); // consume the WHEN
 
     ICodeNode ifNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.IF);
-
-    parseRecurse(token, ifNode);
-
+    parseRecurse(token, ifNode, null);
     return ifNode;
   }
 
-  public void parseRecurse(Token token, ICodeNode ifNode2) throws Exception {
-    // Create an IF node.
+  public void parseRecurse(Token token, ICodeNode ifNode2, ICodeNode otherwiseNode) throws Exception {
 
-    ICodeNode ifNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.IF);
-    ifNode2.addChild(ifNode);
     // Parse the expression.
     // The IF node adopts the expression subtree as its first child.
     ExpressionParser expressionParser = new ExpressionParser(this);
@@ -71,7 +66,7 @@ public class WhenStatementParser extends StatementParser {
 
     // Look for an OTHERWISE.
     if (token.getType() == OTHERWISE) {
-      
+
       token = nextToken(); // consume the OTHERWISE
 
       if (token.getType() == ARROW) {
@@ -82,7 +77,7 @@ public class WhenStatementParser extends StatementParser {
 
       // Parse the ELSE statement.
       // The IF node adopts the statement subtree as its third child.
-      ifNode.addChild(statementParser.parse(token));
+      otherwiseNode.addChild(statementParser.parse(token));
 
       token = currentToken();
 
@@ -96,7 +91,7 @@ public class WhenStatementParser extends StatementParser {
 
     } else {
 
-      ifNode.addChild(expressionParser.parse(token));
+      ifNode2.addChild(expressionParser.parse(token));
 
       // Synchronize at the THEN.
       token = synchronize(THEN_SET);
@@ -109,7 +104,7 @@ public class WhenStatementParser extends StatementParser {
       // Parse the THEN statement.
       // The IF node adopts the statement subtree as its second child.
 
-      ifNode.addChild(statementParser.parse(token));
+      ifNode2.addChild(statementParser.parse(token));
       token = currentToken();
 
       if (token.getType() != SEMICOLON) {
@@ -118,7 +113,12 @@ public class WhenStatementParser extends StatementParser {
 
       token = nextToken();
 
-      parseRecurse(token, ifNode);
+      // Create an IF node.
+      ICodeNode ifNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.IF);
+      
+      ifNode2.addChild(ifNode);
+
+      parseRecurse(token, ifNode, ifNode2);
     }
   }
 }
