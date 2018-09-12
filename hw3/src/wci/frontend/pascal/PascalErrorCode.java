@@ -46,6 +46,7 @@ public enum PascalErrorCode
     MISSING_IDENTIFIER("Missing identifier"),
     MISSING_LEFT_BRACKET("Missing ["),
     MISSING_OF("Missing OF"),
+    MISSING_OTHERWISE("Missing OTHERWISE"),
     MISSING_PERIOD("Missing ."),
     MISSING_PROGRAM("Missing PROGRAM"),
     MISSING_RIGHT_BRACKET("Missing ]"),

@@ -102,6 +102,9 @@ public class WhenStatementParser extends StatementParser {
 
       return;
 
+    } else if (token.getType() == END) { // missing otherwise
+      errorHandler.flag(token, MISSING_OTHERWISE, this);
+      token = synchronize(WHEN_SET);
     } else { // Recursively parse the branches
 
       // add the equality expression to the parentNode
