@@ -1,0 +1,5 @@
+The way we implemented the when statement is by using recursion. The parser will look for the When token, then recursively parse the statement branches. When the parser encounters the otherwise token, it will terminate the recursion by parsing the final otherwise statement, then return the parse tree.
+
+We created the parse tree using the existing if else parse tree, since a when statement can be semantically identical to a cascading if, we used this feature so that we did not have to create any back end executor for our when statement.
+
+We were able to add a new, functional statement to the pascal language. We can now parse when statements, and then execute it within the pascal language.
