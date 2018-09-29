@@ -36,6 +36,7 @@ public class WhenStatementParser extends StatementParser {
 
   static {
     WHEN_SET.add(ARROW);
+    WHEN_SET.add(OTHERWISE);
     WHEN_SET.addAll(StatementParser.STMT_FOLLOW_SET);
   }
 

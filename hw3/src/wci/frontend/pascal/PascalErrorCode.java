@@ -32,7 +32,7 @@ public enum PascalErrorCode
     INVALID_TYPE("Invalid type"),
     INVALID_VAR_PARM("Invalid VAR parameter"),
     MIN_GT_MAX("Min limit greater than max limit"),
-    MISSING_ARROW("Missing BEGIN"),
+    MISSING_ARROW("Missing ARROW"),
     MISSING_BEGIN("Missing BEGIN"),
     MISSING_COLON("Missing :"),
     MISSING_COLON_EQUALS("Missing :="),
