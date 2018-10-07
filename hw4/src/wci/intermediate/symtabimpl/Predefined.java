@@ -25,6 +25,7 @@ public class Predefined
     public static TypeSpec realType;
     public static TypeSpec booleanType;
     public static TypeSpec charType;
+    public static TypeSpec complexType;
     public static TypeSpec undefinedType;
 
     // Predefined identifiers.
@@ -32,6 +33,7 @@ public class Predefined
     public static SymTabEntry realId;
     public static SymTabEntry booleanId;
     public static SymTabEntry charId;
+    public static SymTabEntry complexId;
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
 
@@ -78,6 +80,19 @@ public class Predefined
         charType.setIdentifier(charId);
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
+
+        // Type complex.
+        complexId = symTabStack.enterLocal("complex");
+        complexType = TypeFactory.createType(RECORD);
+        complexType.setIdentifier(complexId);
+        complexType.setAttribute(RECORD_SYMTAB, symTabStack.push());
+        SymTabEntry re = symTabStack.enterLocal("re");
+        re.setTypeSpec(realType);
+        SymTabEntry im = symTabStack.enterLocal("im");
+        im.setTypeSpec(realType);
+        symTabStack.pop();
+        complexId.setDefinition(DefinitionImpl.TYPE);
+        complexId.setTypeSpec(complexType);
 
         // Undefined type.
         undefinedType = TypeFactory.createType(SCALAR);
