@@ -1,0 +1,36 @@
+//function declaration
+func int foo(int a, char b) {
+    //assignment statement
+    a = 1;
+    b = '2';
+
+    //expression
+    a = a - a;
+
+    //conditional statement
+    if (a == 0) {
+        a = a + 1;
+    }
+
+    //loop statement
+    while (a > 0) {
+        a = a - 1;
+    }
+
+    //variable declaration with at least two data types
+    int c = 3;
+    char d = '4';
+
+    return 0;
+}
+
+//procedure declaration
+func void bar(int c) {
+    c = c * c;
+}
+
+//function call
+foo(1, '2');
+
+//procedure call
+bar(3);
