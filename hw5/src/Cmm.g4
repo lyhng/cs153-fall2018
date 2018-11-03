@@ -74,7 +74,7 @@ if_statement : IF LPAREN expression RPAREN block_statement ;
 loop_statements : while_statement ; //currently only implemented while loop
 while_statement : WHILE LPAREN expression RPAREN block_statement ;
 
-//varibale declaration
+//variable declaration
 declaration : type_specifier Whitespace* assignment;
 type_specifier : primitive_types | Identifier | VOID ;
 primitive_types : INT | CHAR ; //we only need 2 data types for assignment 5
