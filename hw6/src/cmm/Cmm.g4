@@ -1,23 +1,31 @@
 grammar Cmm;
 
-//Literals
-VAR : 'var' ;
-SEMI : ';' ;
-COMMA : ',' ;
-SINGLEQUOTE : '\'' ;
-EQUAL : '=' ;
-LPAREN : '(' ;
-RPAREN : ')' ;
-LBRACE : '{' ;
-RBRACE : '}' ;
-IF : 'if' ;
-WHILE : 'while' ;
-INT : 'int' ;
-CHAR : 'char' ;
-VOID : 'void' ;
-FUNC : 'func' ;
-RETURN : 'return' ;
+// Keywords
+Equal: '=';
 
+// Constants
+Constant: DecimalNumber | FloatingNumber | String | Character;
+
+// Number
+fragment Sign: '+' | '-';
+fragment Digit: [0-9];
+fragment NonzeroDigit: [1-9];
+fragment DecimalNumber: (NonzeroDigit Digit* | Digit);
+fragment FloatingNumber: DecimalNumber '.' Digit+ ExponentPart?;
+fragment ExponentFlag: 'e' | 'E';
+fragment ExponentPart: ExponentFlag Sign? Digit+;
+
+// String
+fragment EscapeChar: '\\' ['"nrt\\];
+fragment Char: ~["\\\r\n] | EscapeChar;
+String: '"' Char* '"';
+Character: '\'' Char '\'';
+
+// Identifier
+fragment Nondigit: [a-zA-Z_];
+Identifier: Nondigit (Nondigit | Digit)*;
+
+// skips
 Whitespace
     :   [ \t]+
         -> skip
@@ -30,77 +38,81 @@ Newline
         -> skip
     ;
 
-BlockComment
-    :   '/*' .*? '*/'
-        -> skip
-    ;
+// Expression
+// See https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B#Operator_precedence
+// for the list of operator precedence.
+primary_expression: Identifier | Constant | '(' expression ')';
 
-LineComment
-    :   '//' ~[\r\n]*
-        -> skip
-    ;
+function_call_argument: expression | expression ',' function_call_argument;
+postfix_expression: primary_expression
+    | postfix_expression '[' expression ']'
+    | postfix_expression '(' function_call_argument? ')'
+    | postfix_expression '++'
+    | postfix_expression '--';
 
+unary_expression: postfix_expression
+    | '++' unary_expression
+    | '--' unary_expression
+    | unary_operator unary_expression;
+unary_operator: '&' | '~' | '!' | '+' | '-';
 
-program : statement* ;
+multiplicative_expression: unary_expression
+    | multiplicative_expression multiplicative_operator unary_expression;
+multiplicative_operator: '*' | '/' | '%';
 
-//statement
-statement : assignment
-          | declaration
-          | condition_statments
-          | loop_statements
-          | return_statement
-          | func_declaration
-          | func_call;
+additive_expression: multiplicative_expression
+    | additive_expression additive_operator multiplicative_expression;
+additive_operator: '+' | '-';
 
-statement_list : statement* ;
-block_statement : LBRACE statement_list RBRACE ;
+shift_expression: additive_expression
+    | shift_expression shift_operator additive_expression;
+shift_operator: '<<' | '>>';
 
-//assignment
-assignment : Identifier EQUAL expression SEMI;
+relational_expression: shift_expression
+    | relational_expression relational_operator shift_expression;
+relational_operator: '>' | '>=' | '<' | '<=';
 
-expression : Identifier
-           | Constant
-           | expression Ops expression
-           | func_call
-           | LPAREN expression RPAREN
-           ;
+equality_expression: relational_expression
+    | equality_expression equality_operator relational_expression;
+equality_operator: '==' | '!=';
 
+and_expression: equality_expression | and_expression '&' equality_expression;
+xor_expression: and_expression | xor_expression '^' and_expression;
+or_expression: xor_expression | or_expression '|' xor_expression;
 
-//conditional statement
-condition_statments : if_statement ; //currently only implemented if
-if_statement : IF LPAREN expression RPAREN block_statement ;
+logical_and_expression: or_expression | logical_and_expression '&&' or_expression;
+logical_or_expression: logical_and_expression | logical_or_expression '||' logical_and_expression;
 
-//loop statement
-loop_statements : while_statement ; //currently only implemented while loop
-while_statement : WHILE LPAREN expression RPAREN block_statement ;
+ternary_expression: logical_or_expression ('?' expression ':' ternary_expression)?;
 
-//variable declaration
-declaration : type_specifier Whitespace* assignment;
-type_specifier : primitive_types | Identifier | VOID ;
-primitive_types : INT | CHAR ; //we only need 2 data types for assignment 5
+assignment_operator: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '>>=' | '<<=' | '&=' | '^=' | '|=';
+assignment_expression: ternary_expression | unary_expression assignment_operator expression;
 
-//procedure & function
-func_declaration : func_specifiers type_specifier Identifier LPAREN func_parm_declaration_list? RPAREN block_statement ;
-func_specifiers : FUNC ;
-func_parm_declaration_list : func_parm_declaration | func_parm_declaration COMMA func_parm_declaration_list ;
-func_parm_declaration : type_specifier Whitespace* Identifier ;
+comma_expression: assignment_expression (',' comma_expression)?;
 
-func_call : Identifier LPAREN func_param_call_list? RPAREN ;
-func_param_call_list : func_param_call | func_param_call COMMA func_param_call_list ;
-func_param_call : Whitespace* expression ;
+expression: comma_expression;
 
+// Statement
+// https://en.wikipedia.org/wiki/C_syntax#Control_structures
+builtin_types: ( 'void' | 'char' | 'short' | 'int' | 'long' | 'double' | 'float' | Identifier);
 
-//return statement
-return_statement : RETURN expression SEMI;
+// declarations
+initializer: assignment_expression;
+declarator: Identifier;
+init_declarator: declarator ('=' initializer)?;
+declaration_specifiers: builtin_types;
+declaration: declaration_specifiers init_declarator (',' init_declarator)? ';';
 
-Constant : Integer | Character ;
+compound_statement: '{' (statement | declaration)* '}';
+expression_statement: expression ';';
+selection_statement: 'if' '(' expression ')' statement ('else' statement)?;
+iteration_statement: 'while' '(' expression ')' statement
+    | 'do' statement 'while' '(' expression ')';
+jump_statement: 'continue' ';' | 'break' ';' | 'return' expression? ';';
+statement: compound_statement | expression_statement | selection_statement | iteration_statement | jump_statement;
 
-Integer : Sign? Number ;
-fragment Sign : '+' | '-' ;
-fragment Number : [0-9]+ ;
+// function declaration
+function_paramemter: declaration_specifiers declarator;
+function_declaration: declaration_specifiers declarator '(' function_paramemter? (',' function_paramemter)* ')' compound_statement;
 
-Character : SINGLEQUOTE ~['\\\r\n] SINGLEQUOTE;
-
-Identifier : [a-zA-Z][a-zA-Z0-9]* ;
-
-Ops : '*' | '/' | '+' | '-' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
+cmm: (function_declaration | declaration)*;
