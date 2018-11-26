@@ -2,6 +2,8 @@ package cmm;
 
 import cmm.antlr_gen.CmmBaseVisitor;
 import cmm.antlr_gen.CmmParser;
+import cmm.types.BaseType;
+import cmm.types.TypeVisitor;
 import wci.intermediate.SymTabEntry;
 import wci.intermediate.SymTabFactory;
 import wci.intermediate.SymTabStack;
@@ -47,17 +49,17 @@ public class DirectCompiler extends CmmBaseVisitor<String> {
     // parse function parameters
     List<CmmParser.Function_paramemterContext> parameters = ctx.function_paramemter();
     for (CmmParser.Function_paramemterContext parameter: parameters) {
-      String typename = parameter.declaration_specifiers().accept(this);
+      BaseType type = parameter.declaration_specifiers().accept(TypeVisitor.getInstance());
       String identifier = parameter.declarator().accept(this);
 
       // TODO: push identifier to local symbol table
-      signature.append(this.typeConversation(typename));
+      signature.append(type.toJasminType());
     }
     signature.append(')');
 
     // function return type
-    String typename = ctx.declaration_specifiers().accept(this);
-    signature.append(this.typeConversation(typename));
+    BaseType typename = ctx.declaration_specifiers().accept(TypeVisitor.getInstance());
+    signature.append(typename.toJasminType());
     signature.append('\n');
 
     // build function body
@@ -82,40 +84,9 @@ public class DirectCompiler extends CmmBaseVisitor<String> {
     return ctx.Identifier().toString();
   }
 
-  private String typeConversation(String typename) {
-    switch (typename) {
-      case "int":
-        return "I";
-      case "float":
-        return "F";
-      case "char":
-        return "C";
-      case "void":
-        return "V";
-      default:
-        return null;
-    }
-  }
-
-  private String instructionType(String typename) {
-    switch (typename) {
-      case "int":
-        return "i";
-      case "float":
-        return "f";
-      case "double":
-        return "d";
-      default:
-        return null;
-    }
-  }
-
   @Override
   public String visitDeclaration(CmmParser.DeclarationContext ctx) {
-    // type
-    String typename = ctx.declaration_specifiers().accept(this);
-    String jasminTypename = this.typeConversation(typename);
-
+    BaseType type = ctx.declaration_specifiers().accept(TypeVisitor.getInstance());
     List<CmmParser.Init_declaratorContext> declarators = ctx.init_declarator();
     StringBuilder builder = new StringBuilder();
 
@@ -124,7 +95,7 @@ public class DirectCompiler extends CmmBaseVisitor<String> {
 
       for (CmmParser.Init_declaratorContext declarator: declarators) {
         String name = declarator.declarator().accept(this);
-        builder.append(".field private static ").append(name).append(' ').append(jasminTypename).append('\n');
+        builder.append(".field private static ").append(name).append(' ').append(type.toJasminType()).append('\n');
       }
 
       return builder.toString();
