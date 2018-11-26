@@ -3,10 +3,7 @@ package cmm;
 import cmm.antlr_gen.CmmParser;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
-import cmm.types.BaseType;
-import cmm.types.TypeVisitor;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -14,7 +11,7 @@ public class DirectCompiler extends CommonVisitor {
   private static final String PROGRAM_HEAD = ".class public CmmProgram\n" +
       ".super java/lang/Object\n";
   private static final String PROGRAM_MAIN = ".method public static main([Ljava/lang/String;)V\n" +
-      "invokestatic CmmProgram/_main()I\n" +
+      "invokestatic CmmProgram/_main()V\n" +
       "return\n" +
       ".end method\n";
   private static final String PROGRAM_TAIL = "\n";
@@ -62,32 +59,86 @@ public class DirectCompiler extends CommonVisitor {
 
   @Override
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
-    String name = ctx.function_identifier().accept(this);
+    String name = super.visit(ctx.function_identifier());
     Symbol function = this.symbolTable.get(name);
 
     // build function body
     String function_head = ".method private static " + function.buildSignature() + "\n";
     this.symbolTable = function.getSymbolTable();
+    int size = this.symbolTable.size() + 1;
+    String limits = ".limit locals " + size + "\n.limit stack " + size + "\n";
     String body = ctx.compound_statement().accept(this);
     this.symbolTable = this.symbolTable.getPrevious();
-    String function_tail = ".end method\n";
+    String function_tail = "return\n.end method\n";
 
-    return function_head + body + function_tail;
+    return function_head + limits + body + function_tail;
+  }
+
+  // region Expression
+  // ---------------------------------------------------------------------------------------
+
+
+  @Override
+  public String visitDecimalNumber(CmmParser.DecimalNumberContext ctx) {
+    String number = ctx.DecimalNumber().toString();
+    int n = Integer.valueOf(number);
+
+    if (n <= 5 && n >= 0) {
+      return "iconst_" + number + "\n";
+    } else if (n == -1) {
+      return "iconst_m1\n";
+    }
+
+    return "bipush   " + number + "\n";
   }
 
   @Override
-  public String visitDeclaration(CmmParser.DeclarationContext ctx) {
-    BaseType type = ctx.declaration_specifiers().accept(TypeVisitor.getInstance());
-    List<CmmParser.Init_declaratorContext> declarators = ctx.init_declarator();
-    StringBuilder builder = new StringBuilder();
+  public String visitFloatingNumber(CmmParser.FloatingNumberContext ctx) {
+    String number = ctx.FloatingNumber().toString();
 
-    if (this.symbolTable.getLevel() == 0) {
-      // global variable is built at visitCmm
-      return "";
-    } else {
-      // local variable
+    return "ldc " + number + "\n";
+  }
+
+  // TODO: string
+
+  @Override
+  public String visitPrimary_expression(CmmParser.Primary_expressionContext ctx) {
+    return super.visitPrimary_expression(ctx);
+  }
+
+  @Override
+  public String visitAssignment_expression(CmmParser.Assignment_expressionContext ctx) {
+    if (ctx.assignment_operator() != null) {
+      String name = ctx.Identifier().toString();
+      Symbol symbol = symbolTable.get(name);
+
+      return visit(ctx.expression()) + symbol.store();
     }
 
+    return super.visitAssignment_expression(ctx);
+  }
+
+  // endregion
+
+
+  @Override
+  public String visitInit_declarator(CmmParser.Init_declaratorContext ctx) {
+    if (ctx.initializer() != null) {
+      String name = super.visitDeclarator(ctx.declarator());
+      Symbol symbol = symbolTable.get(name);
+
+      return visit(ctx.initializer()) + symbol.store();
+    }
+    return super.visitInit_declarator(ctx);
+  }
+
+  @Override
+  public String visitBuiltin_types(CmmParser.Builtin_typesContext ctx) {
+    return "";
+  }
+
+  @Override
+  public String visitDeclarator(CmmParser.DeclaratorContext ctx) {
     return "";
   }
 

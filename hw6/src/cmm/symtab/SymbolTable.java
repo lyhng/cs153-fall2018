@@ -35,6 +35,8 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
 
   @Override
   public Symbol put(String key, Symbol value) {
+    // TODO: error if variable is redefined
+
     if (value.getKind() == Symbol.SymbolKind.DECLARATION) {
       value.setIndex(this.local++);
     }

@@ -4,16 +4,20 @@ grammar Cmm;
 Equal: '=';
 
 // Constants
-Constant: DecimalNumber | FloatingNumber | String | Character;
+constant: DecimalNumber # decimalNumber
+    | FloatingNumber # floatingNumber
+    | String # string
+    | Character # character;
 
 // Number
 fragment Sign: '+' | '-';
 fragment Digit: [0-9];
 fragment NonzeroDigit: [1-9];
-fragment DecimalNumber: (NonzeroDigit Digit* | Digit);
-fragment FloatingNumber: DecimalNumber '.' Digit+ ExponentPart?;
 fragment ExponentFlag: 'e' | 'E';
 fragment ExponentPart: ExponentFlag Sign? Digit+;
+
+DecimalNumber: (NonzeroDigit Digit* | Digit);
+FloatingNumber: DecimalNumber '.' Digit+ ExponentPart?;
 
 // String
 fragment EscapeChar: '\\' ['"nrt\\];
@@ -41,7 +45,7 @@ Newline
 // Expression
 // See https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B#Operator_precedence
 // for the list of operator precedence.
-primary_expression: Identifier | Constant | '(' expression ')';
+primary_expression: Identifier | constant | '(' expression ')';
 
 function_call_argument: expression | expression ',' function_call_argument;
 postfix_expression: primary_expression
@@ -86,7 +90,7 @@ logical_or_expression: logical_and_expression | logical_or_expression '||' logic
 ternary_expression: logical_or_expression ('?' expression ':' ternary_expression)?;
 
 assignment_operator: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '>>=' | '<<=' | '&=' | '^=' | '|=';
-assignment_expression: ternary_expression | unary_expression assignment_operator expression;
+assignment_expression: ternary_expression | Identifier assignment_operator expression;
 
 comma_expression: assignment_expression (',' comma_expression)?;
 

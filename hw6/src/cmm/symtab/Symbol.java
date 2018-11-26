@@ -3,6 +3,7 @@ package cmm.symtab;
 import cmm.types.BaseType;
 
 public class Symbol {
+
   public enum SymbolKind {
     DECLARATION,
     PARAMETER,
@@ -86,5 +87,13 @@ public class Symbol {
       return builder.toString();
     }
     return "";
+  }
+
+  public String load() {
+    return this.getType().load(this.index);
+  }
+
+  public String store() {
+    return this.getType().store(this.index);
   }
 }
