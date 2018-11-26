@@ -28,6 +28,14 @@ public abstract class BaseType {
     return this.toJasminInstruction() + "rem\n";
   }
 
+  public String add() {
+    return this.toJasminInstruction() + "add\n";
+  }
+
+  public String sub() {
+    return this.toJasminInstruction() + "sub\n";
+  }
+
   abstract int getLevel();
 
   public boolean canCastTo(BaseType o) throws Exception {

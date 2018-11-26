@@ -183,6 +183,39 @@ public class DirectCompiler extends CommonVisitor {
   }
 
   @Override
+  public String visitAdditive_expression(CmmParser.Additive_expressionContext ctx) {
+    if (ctx.additive_operator() != null) {
+      String operator = ctx.additive_operator().getText();
+
+      CmmParser.Additive_expressionContext left = ctx.additive_expression();
+      CmmParser.Multiplicative_expressionContext right = ctx.multiplicative_expression();
+
+      String opl = visit(left);
+      String opr = visit(right);
+
+      BaseType resultType;
+      try {
+        resultType = left.type.canCastTo(right.type) ? left.type : right.type;
+      } catch (Exception e) {
+        e.printStackTrace();
+        return opl + opr;
+      }
+
+      switch (operator) {
+        case "+":
+          return opl + opr + resultType.add();
+        case "-":
+          return opl + opr + resultType.sub();
+      }
+      // TODO: should throw an exception here
+      return opl + opr;
+    }
+    String result = super.visitAdditive_expression(ctx);
+    ctx.type = ctx.multiplicative_expression().type;
+    return result;
+  }
+
+  @Override
   public String visitAssignment_expression(CmmParser.Assignment_expressionContext ctx) {
     if (ctx.assignment_operator() != null) {
       String name = ctx.Identifier().toString();
