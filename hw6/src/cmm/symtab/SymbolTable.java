@@ -21,6 +21,10 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
     }
   }
 
+  public String getName() {
+    return name;
+  }
+
   public SymbolTable() {
     this(null, null);
   }

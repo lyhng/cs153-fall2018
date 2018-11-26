@@ -50,8 +50,9 @@ public class SymbolTableVisitor extends CommonVisitor {
     }
 
     String result = super.visitFunction_declaration(ctx);
+    BaseType return_type = TypeVisitor.getInstance().visit(ctx.declaration_specifiers());
 
-    previous.put(name, Symbol.createFunction(this.stack));
+    previous.put(name, Symbol.createFunction(this.stack, return_type));
     this.stack = previous;
     return result;
   }

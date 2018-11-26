@@ -1,11 +1,13 @@
 package cmm;
 
 import cmm.antlr_gen.CmmParser;
+import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.TypeVisitor;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class DirectCompiler extends CommonVisitor {
@@ -25,15 +27,30 @@ public class DirectCompiler extends CommonVisitor {
     this.symbolTable = symbolTable;
   }
 
+  private String buildFields() {
+    StringBuilder builder = new StringBuilder();
+    for (Map.Entry<String, Symbol> entry : this.symbolTable.entrySet()) {
+      Symbol symbol = entry.getValue();
+      if (symbol.getKind() != Symbol.SymbolKind.DECLARATION) continue;
+
+      String name = entry.getKey();
+      builder.append(".field private static ");
+      builder.append(name).append(' ');
+      builder.append(symbol.getType().toJasminType()).append('\n');
+    }
+    return builder.toString();
+  }
+
   @Override
   public String visitCmm(CmmParser.CmmContext ctx) {
-    String result = super.visitCmm(ctx);
-
+    StringBuilder builder = new StringBuilder().append(PROGRAM_HEAD);
+    builder.append(this.buildFields());
+    builder.append(super.visitCmm(ctx));
     if (hasMain) {
-      return PROGRAM_HEAD + result + PROGRAM_MAIN + PROGRAM_TAIL;
+      builder.append(PROGRAM_MAIN);
     }
-
-    return PROGRAM_HEAD + result + PROGRAM_TAIL;
+    builder.append(PROGRAM_TAIL);
+    return builder.toString();
   }
 
   @Override
@@ -46,29 +63,11 @@ public class DirectCompiler extends CommonVisitor {
   @Override
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
     String name = ctx.function_identifier().accept(this);
-
-    // build function signature
-    StringBuilder signature = new StringBuilder(".method private static ");
-    signature.append(name).append('(');
-
-    // parse function parameters
-    List<CmmParser.Function_paramemterContext> parameters = ctx.function_paramemter();
-    for (CmmParser.Function_paramemterContext parameter: parameters) {
-      BaseType type = parameter.declaration_specifiers().accept(TypeVisitor.getInstance());
-
-      // TODO: push identifier to local symbol table
-      signature.append(type.toJasminType());
-    }
-    signature.append(')');
-
-    // function return type
-    BaseType typename = ctx.declaration_specifiers().accept(TypeVisitor.getInstance());
-    signature.append(typename.toJasminType());
-    signature.append('\n');
+    Symbol function = this.symbolTable.get(name);
 
     // build function body
-    String function_head = signature.toString();
-    this.symbolTable = this.symbolTable.get(name).getSymbolTable();
+    String function_head = ".method private static " + function.buildSignature() + "\n";
+    this.symbolTable = function.getSymbolTable();
     String body = ctx.compound_statement().accept(this);
     this.symbolTable = this.symbolTable.getPrevious();
     String function_tail = ".end method\n";
@@ -83,14 +82,8 @@ public class DirectCompiler extends CommonVisitor {
     StringBuilder builder = new StringBuilder();
 
     if (this.symbolTable.getLevel() == 0) {
-      // global variable
-
-      for (CmmParser.Init_declaratorContext declarator: declarators) {
-        String name = declarator.declarator().accept(this);
-        builder.append(".field private static ").append(name).append(' ').append(type.toJasminType()).append('\n');
-      }
-
-      return builder.toString();
+      // global variable is built at visitCmm
+      return "";
     } else {
       // local variable
     }
