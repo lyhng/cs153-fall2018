@@ -13,6 +13,11 @@ class PrimitiveType {
     }
 
     @Override
+    int getLevel() {
+      return 0;
+    }
+
+    @Override
     public String toString() {
       return "int";
     }
@@ -27,6 +32,11 @@ class PrimitiveType {
     @Override
     public String toJasminInstruction() {
       return "l";
+    }
+
+    @Override
+    int getLevel() {
+      return 1;
     }
 
     @Override
@@ -47,6 +57,11 @@ class PrimitiveType {
     }
 
     @Override
+    int getLevel() {
+      return 2;
+    }
+
+    @Override
     public String toString() {
       return "float";
     }
@@ -61,6 +76,11 @@ class PrimitiveType {
     @Override
     public String toJasminInstruction() {
       return "d";
+    }
+
+    @Override
+    int getLevel() {
+      return 3;
     }
 
     @Override
@@ -81,6 +101,11 @@ class PrimitiveType {
     }
 
     @Override
+    int getLevel() {
+      return -1;
+    }
+
+    @Override
     public String toString() {
       return "char";
     }
@@ -96,6 +121,11 @@ class PrimitiveType {
     public String toJasminInstruction() {
       // TODO: verify this or maybe throw an Exception
       return "v";
+    }
+
+    @Override
+    int getLevel() {
+      return -1;
     }
 
     @Override

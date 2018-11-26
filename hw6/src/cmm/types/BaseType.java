@@ -15,4 +15,31 @@ public abstract class BaseType {
       return String.format("%sstore_%d\n", this.toJasminInstruction(), index);
     return this.toJasminInstruction() + "store " + index + "\n";
   }
+
+  public String mul() {
+    return this.toJasminInstruction() + "mul\n";
+  }
+
+  public String div() {
+    return this.toJasminInstruction() + "div\n";
+  }
+
+  public String rem() {
+    return this.toJasminInstruction() + "rem\n";
+  }
+
+  abstract int getLevel();
+
+  public boolean canCastTo(BaseType o) throws Exception {
+    int level_a = this.getLevel();
+    int level_b = o.getLevel();
+
+    if (level_a == level_b) return true;
+
+    if (level_a != -1 && level_b != -1) {
+      return level_a < level_b;
+    }
+
+    throw new Exception();
+  }
 }

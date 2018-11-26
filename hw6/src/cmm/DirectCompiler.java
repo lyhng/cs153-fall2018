@@ -3,6 +3,8 @@ package cmm;
 import cmm.antlr_gen.CmmParser;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
+import cmm.types.BaseType;
+import cmm.types.TypeFactory;
 
 import java.util.Map;
 
@@ -103,7 +105,81 @@ public class DirectCompiler extends CommonVisitor {
 
   @Override
   public String visitPrimary_expression(CmmParser.Primary_expressionContext ctx) {
-    return super.visitPrimary_expression(ctx);
+    if (ctx.Identifier() != null) {
+      String name = ctx.Identifier().toString();
+      Symbol symbol = symbolTable.get(name);
+      ctx.type = symbol.getType();
+      return symbol.load();
+    } else if (ctx.constant() != null) {
+      if (ctx.constant() instanceof CmmParser.DecimalNumberContext) {
+        ctx.type = TypeFactory.INT_TYPE;
+      } else if (ctx.constant() instanceof CmmParser.FloatingNumberContext) {
+        ctx.type = TypeFactory.FLOAT_TYPE;
+      }
+
+      return visit(ctx.constant());
+    }
+    ctx.type = ctx.expression().type;
+    return visit(ctx.expression());
+  }
+
+  // TODO: postfix & unary operations
+
+  @Override
+  public String visitPostfix_expression(CmmParser.Postfix_expressionContext ctx) {
+    String result = super.visitPostfix_expression(ctx);
+
+    if (ctx.primary_expression() != null) {
+      ctx.type = ctx.primary_expression().type;
+    }
+
+    return result;
+  }
+
+  @Override
+  public String visitUnary_expression(CmmParser.Unary_expressionContext ctx) {
+    String result = super.visitUnary_expression(ctx);
+
+    if (ctx.postfix_expression() != null) {
+      ctx.type = ctx.postfix_expression().type;
+    }
+
+    return result;
+  }
+
+  @Override
+  public String visitMultiplicative_expression(CmmParser.Multiplicative_expressionContext ctx) {
+    if (ctx.multiplicative_operator() != null) {
+      String operator = ctx.multiplicative_operator().getText();
+
+      CmmParser.Multiplicative_expressionContext left = ctx.multiplicative_expression();
+      CmmParser.Unary_expressionContext right = ctx.unary_expression();
+
+      String opl = visit(left);
+      String opr = visit(right);
+
+      BaseType resultType;
+      try {
+        resultType = left.type.canCastTo(right.type) ? left.type : right.type;
+      } catch (Exception e) {
+        e.printStackTrace();
+        return opl + opr;
+      }
+
+      switch (operator) {
+        case "*":
+          return opl + opr + resultType.mul();
+        case "/":
+          return opl + opr + resultType.div();
+        case "%":
+          return opl + opr + resultType.rem();
+      }
+      // TODO: should throw an exception here
+      return opl + opr;
+    }
+    String result = super.visitMultiplicative_expression(ctx);
+    ctx.type = ctx.unary_expression().type;
+    return result;
   }
 
   @Override
@@ -120,6 +196,15 @@ public class DirectCompiler extends CommonVisitor {
 
   // endregion
 
+  @Override
+  public String visitStatement(CmmParser.StatementContext ctx) {
+    return String.format("; %s\n", ctx.getText()) + super.visitStatement(ctx);
+  }
+
+  @Override
+  public String visitDeclaration(CmmParser.DeclarationContext ctx) {
+    return String.format("; %s\n", ctx.getText()) + super.visitDeclaration(ctx);
+  }
 
   @Override
   public String visitInit_declarator(CmmParser.Init_declaratorContext ctx) {

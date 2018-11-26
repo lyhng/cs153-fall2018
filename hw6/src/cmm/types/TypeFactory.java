@@ -1,12 +1,12 @@
 package cmm.types;
 
 public class TypeFactory {
-  private static BaseType INT_TYPE = new PrimitiveType.IntType();
-  private static BaseType LONG_TYPE = new PrimitiveType.LongType();
-  private static BaseType FLOAT_TYPE = new PrimitiveType.FloatType();
-  private static BaseType DOUBLE_TYPE = new PrimitiveType.DoubleType();
-  private static BaseType CHAR_TYPE = new PrimitiveType.CharType();
-  private static BaseType VOID_TYPE = new PrimitiveType.VoidType();
+  public static BaseType INT_TYPE = new PrimitiveType.IntType();
+  public static BaseType LONG_TYPE = new PrimitiveType.LongType();
+  public static BaseType FLOAT_TYPE = new PrimitiveType.FloatType();
+  public static BaseType DOUBLE_TYPE = new PrimitiveType.DoubleType();
+  public static BaseType CHAR_TYPE = new PrimitiveType.CharType();
+  public static BaseType VOID_TYPE = new PrimitiveType.VoidType();
 
   static BaseType fromString(String typename) {
     switch (typename) {

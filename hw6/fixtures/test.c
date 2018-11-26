@@ -1,16 +1,10 @@
 
-int test = 1;
-int def = 2;
+void main() {
+    int a = 1;
+    int b = 2 * 8;
+    float c = 1.2;
 
-int main() {
-    int a, b, c;
-    float d, e, f;
-    double g;
-
-    print("abc");
+    a = 100;
+    b = b + a;
 }
 
-int foobar(int a, float b, char c) {
-    int d;
-    int e;
-}
