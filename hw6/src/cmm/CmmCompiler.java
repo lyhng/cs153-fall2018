@@ -2,12 +2,11 @@ package cmm;
 
 import cmm.antlr_gen.CmmLexer;
 import cmm.antlr_gen.CmmParser;
+import cmm.symtab.SymbolTable;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
-import wci.intermediate.SymTabStack;
-import wci.util.CrossReferencer;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -48,7 +47,14 @@ public class CmmCompiler {
       return;
     }
 
-    DirectCompiler compiler = new DirectCompiler();
+    SymbolTableVisitor symbolVisitor = new SymbolTableVisitor();
+    symbolVisitor.visit(tree);
+
+    System.out.println("\n");
+    SymbolTable table = symbolVisitor.getStack();
+    table.pprint();
+
+    DirectCompiler compiler = new DirectCompiler(table);
     String result = compiler.visit(tree);
     out.write(result);
 

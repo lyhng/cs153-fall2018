@@ -7,9 +7,10 @@ int main() {
     float d, e, f;
     double g;
 
-
     print("abc");
 }
 
 int foobar(int a, float b, char c) {
+    int d;
+    int e;
 }

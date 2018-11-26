@@ -113,6 +113,7 @@ statement: compound_statement | expression_statement | selection_statement | ite
 
 // function declaration
 function_paramemter: declaration_specifiers declarator;
-function_declaration: declaration_specifiers declarator '(' function_paramemter? (',' function_paramemter)* ')' compound_statement;
+function_identifier: Identifier;
+function_declaration: declaration_specifiers function_identifier '(' function_paramemter? (',' function_paramemter)* ')' compound_statement;
 
 cmm: (function_declaration | declaration)*;

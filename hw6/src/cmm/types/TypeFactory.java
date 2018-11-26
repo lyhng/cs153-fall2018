@@ -5,7 +5,7 @@ public class TypeFactory {
   private static BaseType LONG_TYPE = new PrimitiveType.LongType();
   private static BaseType FLOAT_TYPE = new PrimitiveType.FloatType();
   private static BaseType DOUBLE_TYPE = new PrimitiveType.DoubleType();
-  private static BaseType CHAR_TYPE = new PrimitiveType.DoubleType();
+  private static BaseType CHAR_TYPE = new PrimitiveType.CharType();
   private static BaseType VOID_TYPE = new PrimitiveType.VoidType();
 
   static BaseType fromString(String typename) {
