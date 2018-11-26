@@ -6,9 +6,13 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import wci.intermediate.SymTabStack;
+import wci.util.CrossReferencer;
 
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.PrintWriter;
 
 public class CmmCompiler {
   public static void main(String[] args) throws Exception {
@@ -31,9 +35,26 @@ public class CmmCompiler {
     }
 
     CmmParser parser = new CmmParser(tokens);
-    ParseTree tree = parser.program();
+    ParseTree tree = parser.cmm();
 
     System.out.println("\nParse tree (Lisp format):");
     System.out.println(tree.toStringTree(parser));
+
+    PrintWriter out;
+    try {
+      out = new PrintWriter(new FileWriter("out.j"));
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      return;
+    }
+
+    DirectCompiler compiler = new DirectCompiler();
+    String result = compiler.visit(tree);
+    out.write(result);
+
+    System.out.println("\n\nCompile Result:");
+    System.out.println(result);
+
+    out.close();
   }
 }

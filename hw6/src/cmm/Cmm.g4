@@ -101,7 +101,7 @@ initializer: assignment_expression;
 declarator: Identifier;
 init_declarator: declarator ('=' initializer)?;
 declaration_specifiers: builtin_types;
-declaration: declaration_specifiers init_declarator (',' init_declarator)? ';';
+declaration: declaration_specifiers init_declarator (',' init_declarator)* ';';
 
 compound_statement: '{' (statement | declaration)* '}';
 expression_statement: expression ';';
