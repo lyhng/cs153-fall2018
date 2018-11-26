@@ -1,19 +1,18 @@
 package cmm.symtab;
 
 import cmm.types.BaseType;
+import cmm.types.FunctionType;
+import cmm.types.TypeFactory;
 
 public class Symbol {
 
   public enum SymbolKind {
     DECLARATION,
-    PARAMETER,
-    FUNCTION
+    PARAMETER
   }
 
   private SymbolKind kind;
   private BaseType type;
-  private BaseType returnType;
-  private SymbolTable symbolTable;
   private int index;
 
   private Symbol(SymbolKind kind, BaseType type) {
@@ -27,12 +26,6 @@ public class Symbol {
     this.index = index;
   }
 
-  private Symbol(SymbolKind kind, SymbolTable symbolTable, BaseType returnType) {
-    this.kind = kind;
-    this.symbolTable = symbolTable;
-    this.returnType = returnType;
-  }
-
   public static Symbol createDeclaration(BaseType type) {
     return new Symbol(SymbolKind.DECLARATION, type);
   }
@@ -42,15 +35,7 @@ public class Symbol {
   }
 
   public static Symbol createFunction(SymbolTable symbolTable, BaseType returnType) {
-    return new Symbol(SymbolKind.FUNCTION, symbolTable, returnType);
-  }
-
-  public SymbolTable getSymbolTable() {
-    return symbolTable;
-  }
-
-  public void setSymbolTable(SymbolTable symbolTable) {
-    this.symbolTable = symbolTable;
+    return new Symbol(SymbolKind.DECLARATION, TypeFactory.createFunction(symbolTable, returnType));
   }
 
   public SymbolKind getKind() {
@@ -67,26 +52,6 @@ public class Symbol {
 
   public void setIndex(int index) {
     this.index = index;
-  }
-
-  public String buildSignature() {
-    if (this.kind == SymbolKind.FUNCTION) {
-      StringBuilder builder = new StringBuilder();
-
-      builder.append(this.symbolTable.getName()).append('(');
-
-      for (Symbol symbol: this.symbolTable.values()) {
-        if (symbol.getKind() == SymbolKind.PARAMETER) {
-          builder.append(symbol.getType().toJasminType());
-        }
-      }
-
-      builder.append(')');
-      builder.append(this.returnType.toJasminType());
-
-      return builder.toString();
-    }
-    return "";
   }
 
   public String load() {

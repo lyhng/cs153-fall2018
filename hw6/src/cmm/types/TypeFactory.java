@@ -1,5 +1,7 @@
 package cmm.types;
 
+import cmm.symtab.SymbolTable;
+
 public class TypeFactory {
   public static final BaseType INT_TYPE = new PrimitiveType.IntType();
   public static final BaseType LONG_TYPE = new PrimitiveType.LongType();
@@ -24,5 +26,9 @@ public class TypeFactory {
         return VOID_TYPE;
     }
     return null;
+  }
+
+  public static BaseType createFunction(SymbolTable symbolTable, BaseType returnType) {
+    return new FunctionType(symbolTable, returnType);
   }
 }

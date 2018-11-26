@@ -6,12 +6,20 @@ grammar Cmm;
 // Expression
 // See https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B#Operator_precedence
 // for the list of operator precedence.
+// Constants
+constant: DecimalNumber # decimalNumber
+    | FloatingNumber # floatingNumber
+    | String # string
+    | Character # character;
+
 primary_expression locals [ BaseType type = null ]
     : Identifier | constant | '(' expression ')';
 
-postfix_expression locals [ BaseType type = null ] : primary_expression
-    | postfix_expression '[' expression ']'
-    | postfix_expression '(' expression* ')'
+function_array_expression locals [ BaseType type = null ] : primary_expression # primaryExpression
+    | function_array_expression '[' expression ']'  # arrayIndex
+    | function_array_expression '(' expression* ')' # functionCall;
+
+postfix_expression locals [ BaseType type = null ] : function_array_expression
     | postfix_expression '++'
     | postfix_expression '--';
 
@@ -85,12 +93,6 @@ cmm: (function_declaration | declaration)*;
 
 // Keywords
 Equal: '=';
-
-// Constants
-constant: DecimalNumber # decimalNumber
-    | FloatingNumber # floatingNumber
-    | String # string
-    | Character # character;
 
 // Number
 fragment Sign: '+' | '-';

@@ -54,6 +54,9 @@ public class CmmCompiler {
     SymbolTable table = symbolVisitor.getStack();
     table.pprint();
 
+    ExpressionTypeVisitor exprTypeVisitor = new ExpressionTypeVisitor(table);
+    exprTypeVisitor.visit(tree);
+
     DirectCompiler compiler = new DirectCompiler(table);
     String result = compiler.visit(tree);
     out.write(result);

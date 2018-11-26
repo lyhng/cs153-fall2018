@@ -4,6 +4,7 @@ import cmm.antlr_gen.CmmParser;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
+import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
 
 import java.util.Map;
@@ -62,7 +63,14 @@ public class DirectCompiler extends CommonVisitor {
   @Override
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
     String name = super.visit(ctx.function_identifier());
-    Symbol function = this.symbolTable.get(name);
+    Symbol function_symbol = this.symbolTable.get(name);
+
+    if (!(function_symbol.getType() instanceof FunctionType)) {
+      // TODO: throw an exception. trying to create non function type
+      return "";
+    }
+
+    FunctionType function = (FunctionType)function_symbol.getType();
 
     // build function body
     String function_head = ".method private static " + function.buildSignature() + "\n";
@@ -78,7 +86,6 @@ public class DirectCompiler extends CommonVisitor {
 
   // region Expression
   // ---------------------------------------------------------------------------------------
-
 
   @Override
   public String visitDecimalNumber(CmmParser.DecimalNumberContext ctx) {
@@ -108,44 +115,18 @@ public class DirectCompiler extends CommonVisitor {
     if (ctx.Identifier() != null) {
       String name = ctx.Identifier().toString();
       Symbol symbol = symbolTable.get(name);
-      ctx.type = symbol.getType();
       return symbol.load();
-    } else if (ctx.constant() != null) {
-      if (ctx.constant() instanceof CmmParser.DecimalNumberContext) {
-        ctx.type = TypeFactory.INT_TYPE;
-      } else if (ctx.constant() instanceof CmmParser.FloatingNumberContext) {
-        ctx.type = TypeFactory.FLOAT_TYPE;
-      }
-
-      return visit(ctx.constant());
     }
-    ctx.type = ctx.expression().type;
-    return visit(ctx.expression());
+    return super.visitPrimary_expression(ctx);
+  }
+
+  @Override
+  public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
+    // TODO: function call
+    return super.visitFunctionCall(ctx);
   }
 
   // TODO: postfix & unary operations
-
-  @Override
-  public String visitPostfix_expression(CmmParser.Postfix_expressionContext ctx) {
-    String result = super.visitPostfix_expression(ctx);
-
-    if (ctx.primary_expression() != null) {
-      ctx.type = ctx.primary_expression().type;
-    }
-
-    return result;
-  }
-
-  @Override
-  public String visitUnary_expression(CmmParser.Unary_expressionContext ctx) {
-    String result = super.visitUnary_expression(ctx);
-
-    if (ctx.postfix_expression() != null) {
-      ctx.type = ctx.postfix_expression().type;
-    }
-
-    return result;
-  }
 
   @Override
   public String visitMultiplicative_expression(CmmParser.Multiplicative_expressionContext ctx) {
@@ -178,7 +159,6 @@ public class DirectCompiler extends CommonVisitor {
       return opl + opr;
     }
     String result = super.visitMultiplicative_expression(ctx);
-    ctx.type = ctx.unary_expression().type;
     return result;
   }
 
@@ -211,7 +191,6 @@ public class DirectCompiler extends CommonVisitor {
       return opl + opr;
     }
     String result = super.visitAdditive_expression(ctx);
-    ctx.type = ctx.multiplicative_expression().type;
     return result;
   }
 

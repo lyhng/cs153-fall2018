@@ -1,5 +1,7 @@
 package cmm.symtab;
 
+import cmm.types.FunctionType;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -62,9 +64,9 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
       Symbol symbol = entry.getValue();
       System.out.printf("%s| %-10s: %-12s ", space, entry.getKey(), symbol.getKind());
 
-      if (symbol.getKind() == Symbol.SymbolKind.FUNCTION) {
+      if (symbol.getType() instanceof FunctionType) {
         System.out.printf("%-19s |\n", "");
-        symbol.getSymbolTable().pprint(level + 1);
+        ((FunctionType)symbol.getType()).getSymbolTable().pprint(level + 1);
       } else {
         System.out.printf(" %-18s |\n", String.format("(%s, %d)", symbol.getType(), symbol.getIndex()));
       }
