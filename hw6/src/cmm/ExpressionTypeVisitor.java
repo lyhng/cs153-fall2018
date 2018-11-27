@@ -7,6 +7,8 @@ import cmm.types.BaseType;
 import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
 
+import java.util.List;
+
 public class ExpressionTypeVisitor extends CommonVisitor {
   private SymbolTable symbolTable;
 
@@ -60,6 +62,11 @@ public class ExpressionTypeVisitor extends CommonVisitor {
     if (!(type instanceof FunctionType)) {
       // TODO: error
       return this.defaultResult();
+    }
+
+    List<CmmParser.ExpressionContext> arguments = ctx.expression();
+    for (CmmParser.ExpressionContext argument : arguments) {
+      visit(argument);
     }
 
     ctx.type = ((FunctionType) type).getReturnType();

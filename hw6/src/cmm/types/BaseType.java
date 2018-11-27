@@ -53,4 +53,28 @@ public abstract class BaseType {
 
     throw new Exception();
   }
+
+  public BaseType tryCastTo(BaseType o) throws Exception {
+    return this.canCastTo(o) ? o : this;
+  }
+
+  public String shl() {
+    return this.toJasminInstruction() + "shl\n";
+  }
+
+  public String shr() {
+    return this.toJasminInstruction() + "shr\n";
+  }
+
+  public String and() {
+    return this.toJasminInstruction() + "and\n";
+  }
+
+  public String xor() {
+    return this.toJasminInstruction() + "xor\n";
+  }
+
+  public String or() {
+    return this.toJasminInstruction() + "or\n";
+  }
 }

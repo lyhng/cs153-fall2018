@@ -5,9 +5,11 @@ import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.FunctionType;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class DirectCompiler extends CommonVisitor {
   private static final String PROGRAM_HEAD =
@@ -144,7 +146,8 @@ public class DirectCompiler extends CommonVisitor {
     StringBuilder arguments_ops = new StringBuilder();
     List<CmmParser.ExpressionContext> arguments = ctx.expression();
     for (CmmParser.ExpressionContext argument : arguments) {
-      arguments_ops.append(visit(argument));
+      String result = argument.accept(this);
+      arguments_ops.append(result);
     }
 
     SymbolTable table = symbolTable.lookupTable(name);
@@ -156,35 +159,39 @@ public class DirectCompiler extends CommonVisitor {
 
   // TODO: postfix & unary operations
 
+  private String operator_expression(ParserRuleContext left_ctx, ParserRuleContext right_ctx,
+                                     BaseType left_type, BaseType right_type,
+                                     Function<BaseType, String> instruction) {
+//    System.out.printf("left: %s, right: %s\n", left_ctx.getText(), right_ctx.getText());
+//    System.out.printf("left type: %s, right type: %s\n\n", left_type, right_type);
+    BaseType type;
+    try {
+      type = left_type.tryCastTo(right_type);
+    } catch (Exception e) {
+      return "";
+    }
+
+    return visit(left_ctx) + visit(right_ctx) + instruction.apply(type);
+  }
+
   @Override
   public String visitMultiplicative_expression(CmmParser.Multiplicative_expressionContext ctx) {
     if (ctx.multiplicative_operator() != null) {
       String operator = ctx.multiplicative_operator().getText();
 
-      CmmParser.Multiplicative_expressionContext left = ctx.multiplicative_expression();
-      CmmParser.Unary_expressionContext right = ctx.unary_expression();
-
-      String opl = visit(left);
-      String opr = visit(right);
-
-      BaseType resultType;
-      try {
-        resultType = left.type.canCastTo(right.type) ? left.type : right.type;
-      } catch (Exception e) {
-        e.printStackTrace();
-        return opl + opr;
-      }
-
-      switch (operator) {
-        case "*":
-          return opl + opr + resultType.mul();
-        case "/":
-          return opl + opr + resultType.div();
-        case "%":
-          return opl + opr + resultType.rem();
-      }
-      // TODO: should throw an exception here
-      return opl + opr;
+      return operator_expression(ctx.multiplicative_expression(), ctx.unary_expression(),
+          ctx.multiplicative_expression().type, ctx.unary_expression().type,
+          (type) -> {
+            switch (operator) {
+              case "*":
+                return type.mul();
+              case "/":
+                return type.div();
+              case "%":
+                return type.rem();
+            }
+            return "";
+          });
     }
     return super.visitMultiplicative_expression(ctx);
   }
@@ -194,30 +201,73 @@ public class DirectCompiler extends CommonVisitor {
     if (ctx.additive_operator() != null) {
       String operator = ctx.additive_operator().getText();
 
-      CmmParser.Additive_expressionContext left = ctx.additive_expression();
-      CmmParser.Multiplicative_expressionContext right = ctx.multiplicative_expression();
+      String result = operator_expression(ctx.additive_expression(), ctx.multiplicative_expression(),
+          ctx.additive_expression().type, ctx.multiplicative_expression().type,
+          (type) -> {
+            switch (operator) {
+              case "+":
+                return type.add();
+              case "-":
+                return type.sub();
+            }
+            return "";
+          });
 
-      String opl = visit(left);
-      String opr = visit(right);
+      System.out.println(result);
 
-      BaseType resultType;
-      try {
-        resultType = left.type.canCastTo(right.type) ? left.type : right.type;
-      } catch (Exception e) {
-        e.printStackTrace();
-        return opl + opr;
-      }
-
-      switch (operator) {
-        case "+":
-          return opl + opr + resultType.add();
-        case "-":
-          return opl + opr + resultType.sub();
-      }
-      // TODO: should throw an exception here
-      return opl + opr;
+      return result;
     }
     return super.visitAdditive_expression(ctx);
+  }
+
+  @Override
+  public String visitShift_expression(CmmParser.Shift_expressionContext ctx) {
+    if (ctx.shift_operator() != null) {
+      String operator = ctx.shift_operator().getText();
+
+      return operator_expression(ctx.shift_expression(), ctx.additive_expression(),
+          ctx.shift_expression().type, ctx.additive_expression().type,
+          (type) -> {
+            switch (operator) {
+              case "<<":
+                return type.shl();
+              case ">>":
+                return type.shr();
+            }
+            return "";
+          });
+    }
+    return super.visitShift_expression(ctx);
+  }
+
+  @Override
+  public String visitAnd_expression(CmmParser.And_expressionContext ctx) {
+    if (ctx.and_expression() != null) {
+      return operator_expression(ctx.and_expression(), ctx.equality_expression(),
+          ctx.and_expression().type, ctx.equality_expression().type,
+          BaseType::and);
+    }
+    return super.visitAnd_expression(ctx);
+  }
+
+  @Override
+  public String visitXor_expression(CmmParser.Xor_expressionContext ctx) {
+    if (ctx.xor_expression() != null) {
+      return operator_expression(ctx.xor_expression(), ctx.and_expression(),
+          ctx.xor_expression().type, ctx.and_expression().type,
+          BaseType::xor);
+    }
+    return super.visitXor_expression(ctx);
+  }
+
+  @Override
+  public String visitOr_expression(CmmParser.Or_expressionContext ctx) {
+    if (ctx.or_expression() != null) {
+      return operator_expression(ctx.or_expression(), ctx.xor_expression(),
+          ctx.or_expression().type, ctx.xor_expression().type,
+          BaseType::or);
+    }
+    return super.visitOr_expression(ctx);
   }
 
   @Override
