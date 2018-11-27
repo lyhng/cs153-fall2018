@@ -23,8 +23,8 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
     }
   }
 
-  public SymbolTable() {
-    this(null, null);
+  public SymbolTable(String name) {
+    this(name, null);
   }
 
   public String getName() {
@@ -86,6 +86,16 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
 
     if (this.previous != null) {
       return this.previous.lookup(key);
+    }
+
+    return null;
+  }
+
+  public SymbolTable lookupTable(String key) {
+    if (this.containsKey(key)) return this;
+
+    if (this.previous != null) {
+      return this.previous.lookupTable(key);
     }
 
     return null;

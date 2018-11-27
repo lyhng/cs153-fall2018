@@ -147,7 +147,9 @@ public class DirectCompiler extends CommonVisitor {
       arguments_ops.append(visit(argument));
     }
 
-    arguments_ops.append(String.format("invokestatic CmmProgram/%s\n", function.buildSignature()));
+    SymbolTable table = symbolTable.lookupTable(name);
+
+    arguments_ops.append(String.format("invokestatic %s/%s\n", table.getName().replace('.', '/'), function.buildSignature()));
 
     return arguments_ops.toString();
   }

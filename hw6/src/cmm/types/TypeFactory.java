@@ -31,4 +31,22 @@ public class TypeFactory {
   public static BaseType createFunction(SymbolTable symbolTable, BaseType returnType) {
     return new FunctionType(symbolTable, returnType);
   }
+
+  public static BaseType fromJava(Class<?> returnType) {
+    if (returnType.equals(int.class)) {
+      return INT_TYPE;
+    } else if (returnType.equals(long.class)) {
+      return LONG_TYPE;
+    } else if (returnType.equals(float.class)) {
+      return FLOAT_TYPE;
+    } else if (returnType.equals(double.class)) {
+      return DOUBLE_TYPE;
+    } else if (returnType.equals(char.class)) {
+      return CHAR_TYPE;
+    } else if (returnType.equals(void.class)) {
+      return VOID_TYPE;
+    }
+
+    return null;
+  }
 }

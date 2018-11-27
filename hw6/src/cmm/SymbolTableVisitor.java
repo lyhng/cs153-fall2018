@@ -12,8 +12,9 @@ public class SymbolTableVisitor extends CommonVisitor {
   private SymbolTable stack;
 
   public SymbolTableVisitor() {
-    stack = new SymbolTable();
-    // TODO: predefined symbol table
+    SymbolTable runtime = RuntimeGenerator.generate();
+
+    stack = new SymbolTable("CmmProgram", runtime);
   }
 
   public SymbolTable getStack() {
