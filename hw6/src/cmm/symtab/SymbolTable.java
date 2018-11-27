@@ -23,12 +23,12 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
     }
   }
 
-  public String getName() {
-    return name;
-  }
-
   public SymbolTable() {
     this(null, null);
+  }
+
+  public String getName() {
+    return name;
   }
 
   public SymbolTable getPrevious() {
@@ -66,9 +66,10 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
 
       if (symbol.getType() instanceof FunctionType) {
         System.out.printf("%-19s |\n", "");
-        ((FunctionType)symbol.getType()).getSymbolTable().pprint(level + 1);
+        ((FunctionType) symbol.getType()).getSymbolTable().pprint(level + 1);
       } else {
-        System.out.printf(" %-18s |\n", String.format("(%s, %d)", symbol.getType(), symbol.getIndex()));
+        System.out.printf(
+            " %-18s |\n", String.format("(%s, %d)", symbol.getType(), symbol.getIndex()));
       }
     }
 

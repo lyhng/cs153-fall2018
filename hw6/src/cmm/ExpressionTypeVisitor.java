@@ -21,7 +21,7 @@ public class ExpressionTypeVisitor extends CommonVisitor {
         ctx.type = TypeFactory.INT_TYPE;
       } else if (ctx.constant() instanceof CmmParser.FloatingNumberContext) {
         ctx.type = TypeFactory.FLOAT_TYPE;
-      } else if (ctx.constant() instanceof  CmmParser.StringContext) {
+      } else if (ctx.constant() instanceof CmmParser.StringContext) {
         // TODO: string type
       } else if (ctx.constant() instanceof CmmParser.CharacterContext) {
         ctx.type = TypeFactory.CHAR_TYPE;
@@ -51,7 +51,6 @@ public class ExpressionTypeVisitor extends CommonVisitor {
 
   // TODO: expression type for array expression
 
-
   @Override
   public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
     String name = super.visit(ctx.function_identifier());
@@ -63,7 +62,7 @@ public class ExpressionTypeVisitor extends CommonVisitor {
       return this.defaultResult();
     }
 
-    ctx.type = ((FunctionType)type).getReturnType();
+    ctx.type = ((FunctionType) type).getReturnType();
     return this.defaultResult();
   }
 
@@ -189,9 +188,9 @@ public class ExpressionTypeVisitor extends CommonVisitor {
       return "";
     }
 
-    FunctionType function = (FunctionType)function_symbol.getType();
+    FunctionType function = (FunctionType) function_symbol.getType();
     this.symbolTable = function.getSymbolTable();
-    String result =  super.visitFunction_declaration(ctx);
+    String result = super.visitFunction_declaration(ctx);
     this.symbolTable = this.symbolTable.getPrevious();
 
     return result;

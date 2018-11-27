@@ -25,7 +25,7 @@ public class SymbolTableVisitor extends CommonVisitor {
     BaseType type = TypeVisitor.getInstance().visit(ctx.declaration_specifiers());
     List<CmmParser.Init_declaratorContext> declarators = ctx.init_declarator();
 
-    for (CmmParser.Init_declaratorContext declarator: declarators) {
+    for (CmmParser.Init_declaratorContext declarator : declarators) {
       String name = declarator.declarator().accept(this);
       stack.put(name, Symbol.createDeclaration(type));
     }
@@ -42,7 +42,7 @@ public class SymbolTableVisitor extends CommonVisitor {
 
     List<CmmParser.Function_paramemterContext> parameters = ctx.function_paramemter();
     int index = 0;
-    for (CmmParser.Function_paramemterContext parameter: parameters) {
+    for (CmmParser.Function_paramemterContext parameter : parameters) {
       BaseType type = TypeVisitor.getInstance().visit(parameter.declaration_specifiers());
       String parameter_name = parameter.declarator().accept(this);
 

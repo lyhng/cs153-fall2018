@@ -5,19 +5,18 @@ import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.FunctionType;
-import cmm.types.TypeFactory;
 
 import java.util.List;
 import java.util.Map;
 
-
 public class DirectCompiler extends CommonVisitor {
-  private static final String PROGRAM_HEAD = ".class public CmmProgram\n" +
-      ".super java/lang/Object\n";
-  private static final String PROGRAM_MAIN = ".method public static main([Ljava/lang/String;)V\n" +
-      "invokestatic CmmProgram/_main()V\n" +
-      "return\n" +
-      ".end method\n";
+  private static final String PROGRAM_HEAD =
+      ".class public CmmProgram\n" + ".super java/lang/Object\n";
+  private static final String PROGRAM_MAIN =
+      ".method public static main([Ljava/lang/String;)V\n"
+          + "invokestatic CmmProgram/_main()V\n"
+          + "return\n"
+          + ".end method\n";
   private static final String PROGRAM_TAIL = "\n";
 
   private boolean hasMain;
@@ -72,7 +71,7 @@ public class DirectCompiler extends CommonVisitor {
       return "";
     }
 
-    FunctionType function = (FunctionType)function_symbol.getType();
+    FunctionType function = (FunctionType) function_symbol.getType();
 
     // build function body
     String function_head = ".method private static " + function.buildSignature() + "\n";
@@ -137,14 +136,14 @@ public class DirectCompiler extends CommonVisitor {
       return super.visitFunctionCall(ctx);
     }
 
-    FunctionType function = (FunctionType)type;
+    FunctionType function = (FunctionType) type;
 
     // parameter
     // TODO: parameter type validation
 
     StringBuilder arguments_ops = new StringBuilder();
     List<CmmParser.ExpressionContext> arguments = ctx.expression();
-    for (CmmParser.ExpressionContext argument: arguments) {
+    for (CmmParser.ExpressionContext argument : arguments) {
       arguments_ops.append(visit(argument));
     }
 
@@ -233,24 +232,24 @@ public class DirectCompiler extends CommonVisitor {
 
   // endregion
 
-
   @Override
   public String visitJump_statement(CmmParser.Jump_statementContext ctx) {
     String kind = ctx.getChild(0).getText();
 
     switch (kind) {
-      case "return": {
-        String result = "";
+      case "return":
+        {
+          String result = "";
 
-        if (ctx.expression() != null) {
-          result += visit(ctx.expression());
+          if (ctx.expression() != null) {
+            result += visit(ctx.expression());
+          }
+
+          // TODO: return based on function return type
+          result += ctx.expression().type.return_();
+
+          return result;
         }
-
-        // TODO: return based on function return type
-        result += ctx.expression().type.return_();
-
-        return result;
-      }
     }
     return super.visitJump_statement(ctx);
   }

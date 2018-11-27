@@ -1,20 +1,13 @@
 package cmm.symtab;
 
 import cmm.types.BaseType;
-import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
 
 public class Symbol {
 
-  public enum SymbolKind {
-    DECLARATION,
-    PARAMETER
-  }
-
   private SymbolKind kind;
   private BaseType type;
   private int index;
-
   private Symbol(SymbolKind kind, BaseType type) {
     this.kind = kind;
     this.type = type;
@@ -60,5 +53,10 @@ public class Symbol {
 
   public String store() {
     return this.getType().store(this.index);
+  }
+
+  public enum SymbolKind {
+    DECLARATION,
+    PARAMETER
   }
 }

@@ -29,7 +29,7 @@ public class CmmCompiler {
     System.out.println("Tokens: ");
     tokens.fill();
 
-    for (Token token: tokens.getTokens()) {
+    for (Token token : tokens.getTokens()) {
       System.out.println(token.toString());
     }
 

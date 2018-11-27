@@ -40,7 +40,7 @@ public class FunctionType extends BaseType {
 
     builder.append(this.symbolTable.getName()).append('(');
 
-    for (Symbol symbol: this.symbolTable.values()) {
+    for (Symbol symbol : this.symbolTable.values()) {
       if (symbol.getKind() == Symbol.SymbolKind.PARAMETER) {
         builder.append(symbol.getType().toJasminType());
       }
