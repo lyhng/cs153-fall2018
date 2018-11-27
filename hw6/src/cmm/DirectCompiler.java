@@ -7,6 +7,7 @@ import cmm.types.BaseType;
 import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -32,6 +33,7 @@ public class DirectCompiler extends CommonVisitor {
     for (Map.Entry<String, Symbol> entry : this.symbolTable.entrySet()) {
       Symbol symbol = entry.getValue();
       if (symbol.getKind() != Symbol.SymbolKind.DECLARATION) continue;
+      if (symbol.getType() instanceof FunctionType) continue;
 
       String name = entry.getKey();
       builder.append(".field private static ");
@@ -63,7 +65,7 @@ public class DirectCompiler extends CommonVisitor {
   @Override
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
     String name = super.visit(ctx.function_identifier());
-    Symbol function_symbol = this.symbolTable.get(name);
+    Symbol function_symbol = this.symbolTable.lookup(name);
 
     if (!(function_symbol.getType() instanceof FunctionType)) {
       // TODO: throw an exception. trying to create non function type
@@ -79,7 +81,11 @@ public class DirectCompiler extends CommonVisitor {
     String limits = ".limit locals " + size + "\n.limit stack " + size + "\n";
     String body = ctx.compound_statement().accept(this);
     this.symbolTable = this.symbolTable.getPrevious();
-    String function_tail = "return\n.end method\n";
+    String function_tail = ".end method\n";
+
+    if (!body.endsWith("return\n")) {
+      function_tail = "return\n" + function_tail;
+    }
 
     return function_head + limits + body + function_tail;
   }
@@ -114,7 +120,7 @@ public class DirectCompiler extends CommonVisitor {
   public String visitPrimary_expression(CmmParser.Primary_expressionContext ctx) {
     if (ctx.Identifier() != null) {
       String name = ctx.Identifier().toString();
-      Symbol symbol = symbolTable.get(name);
+      Symbol symbol = symbolTable.lookup(name);
       return symbol.load();
     }
     return super.visitPrimary_expression(ctx);
@@ -122,8 +128,29 @@ public class DirectCompiler extends CommonVisitor {
 
   @Override
   public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
-    // TODO: function call
-    return super.visitFunctionCall(ctx);
+    String name = visit(ctx.function_identifier());
+    Symbol symbol = symbolTable.lookup(name);
+    BaseType type = symbol.getType();
+
+    if (!(type instanceof FunctionType)) {
+      // TODO: error
+      return super.visitFunctionCall(ctx);
+    }
+
+    FunctionType function = (FunctionType)type;
+
+    // parameter
+    // TODO: parameter type validation
+
+    StringBuilder arguments_ops = new StringBuilder();
+    List<CmmParser.ExpressionContext> arguments = ctx.expression();
+    for (CmmParser.ExpressionContext argument: arguments) {
+      arguments_ops.append(visit(argument));
+    }
+
+    arguments_ops.append(String.format("invokestatic CmmProgram/%s\n", function.buildSignature()));
+
+    return arguments_ops.toString();
   }
 
   // TODO: postfix & unary operations
@@ -158,8 +185,7 @@ public class DirectCompiler extends CommonVisitor {
       // TODO: should throw an exception here
       return opl + opr;
     }
-    String result = super.visitMultiplicative_expression(ctx);
-    return result;
+    return super.visitMultiplicative_expression(ctx);
   }
 
   @Override
@@ -190,15 +216,14 @@ public class DirectCompiler extends CommonVisitor {
       // TODO: should throw an exception here
       return opl + opr;
     }
-    String result = super.visitAdditive_expression(ctx);
-    return result;
+    return super.visitAdditive_expression(ctx);
   }
 
   @Override
   public String visitAssignment_expression(CmmParser.Assignment_expressionContext ctx) {
     if (ctx.assignment_operator() != null) {
       String name = ctx.Identifier().toString();
-      Symbol symbol = symbolTable.get(name);
+      Symbol symbol = symbolTable.lookup(name);
 
       return visit(ctx.expression()) + symbol.store();
     }
@@ -207,6 +232,28 @@ public class DirectCompiler extends CommonVisitor {
   }
 
   // endregion
+
+
+  @Override
+  public String visitJump_statement(CmmParser.Jump_statementContext ctx) {
+    String kind = ctx.getChild(0).getText();
+
+    switch (kind) {
+      case "return": {
+        String result = "";
+
+        if (ctx.expression() != null) {
+          result += visit(ctx.expression());
+        }
+
+        // TODO: return based on function return type
+        result += ctx.expression().type.return_();
+
+        return result;
+      }
+    }
+    return super.visitJump_statement(ctx);
+  }
 
   @Override
   public String visitStatement(CmmParser.StatementContext ctx) {
@@ -222,7 +269,7 @@ public class DirectCompiler extends CommonVisitor {
   public String visitInit_declarator(CmmParser.Init_declaratorContext ctx) {
     if (ctx.initializer() != null) {
       String name = super.visitDeclarator(ctx.declarator());
-      Symbol symbol = symbolTable.get(name);
+      Symbol symbol = symbolTable.lookup(name);
 
       return visit(ctx.initializer()) + symbol.store();
     }

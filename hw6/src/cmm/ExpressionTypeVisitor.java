@@ -36,7 +36,7 @@ public class ExpressionTypeVisitor extends CommonVisitor {
 
     // Identifier
     String name = ctx.Identifier().toString();
-    Symbol symbol = symbolTable.get(name);
+    Symbol symbol = symbolTable.lookup(name);
     ctx.type = symbol.getType();
 
     return visit(ctx.Identifier());
@@ -54,16 +54,17 @@ public class ExpressionTypeVisitor extends CommonVisitor {
 
   @Override
   public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
-    String result = super.visitFunctionCall(ctx);
-    BaseType type = ctx.function_array_expression().type;
+    String name = super.visit(ctx.function_identifier());
+    Symbol symbol = symbolTable.lookup(name);
+    BaseType type = symbol.getType();
 
     if (!(type instanceof FunctionType)) {
       // TODO: error
-      return result;
+      return this.defaultResult();
     }
 
     ctx.type = ((FunctionType)type).getReturnType();
-    return result;
+    return this.defaultResult();
   }
 
   @Override
@@ -181,7 +182,7 @@ public class ExpressionTypeVisitor extends CommonVisitor {
   @Override
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
     String name = super.visit(ctx.function_identifier());
-    Symbol function_symbol = this.symbolTable.get(name);
+    Symbol function_symbol = this.symbolTable.lookup(name);
 
     if (!(function_symbol.getType() instanceof FunctionType)) {
       // TODO: throw an exception. trying to create non function type

@@ -79,4 +79,14 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
   public int getLevel() {
     return level;
   }
+
+  public Symbol lookup(String key) {
+    if (this.containsKey(key)) return this.get(key);
+
+    if (this.previous != null) {
+      return this.previous.lookup(key);
+    }
+
+    return null;
+  }
 }

@@ -17,7 +17,7 @@ primary_expression locals [ BaseType type = null ]
 
 function_array_expression locals [ BaseType type = null ] : primary_expression # primaryExpression
     | function_array_expression '[' expression ']'  # arrayIndex
-    | function_array_expression '(' expression* ')' # functionCall;
+    | function_identifier '(' expression* ')' # functionCall;
 
 postfix_expression locals [ BaseType type = null ] : function_array_expression
     | postfix_expression '++'
