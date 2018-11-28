@@ -43,8 +43,11 @@ void main() {
     print(testPriority3);
     print(expectedPriority3);
 
+    print(c == 64);
 
-
-
+    if (c % 2 == 0) {
+        print(99);
+    } else {
+        print(88);
+    }
 }
-
