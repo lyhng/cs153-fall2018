@@ -3,6 +3,7 @@ package cmm;
 import cmm.antlr_gen.CmmLexer;
 import cmm.antlr_gen.CmmParser;
 import cmm.symtab.SymbolTable;
+import jasmin.Main;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -12,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.PrintWriter;
+
 
 public class CmmCompiler {
   public static void main(String[] args) throws Exception {
@@ -40,8 +42,9 @@ public class CmmCompiler {
     System.out.println(tree.toStringTree(parser));
 
     PrintWriter out;
+    String outputFileName = "out.j";
     try {
-      out = new PrintWriter(new FileWriter("out.j"));
+      out = new PrintWriter(new FileWriter(outputFileName));
     } catch (Exception ex) {
       ex.printStackTrace();
       return;
@@ -65,5 +68,9 @@ public class CmmCompiler {
     System.out.println(result);
 
     out.close();
+
+    // Assemble the output file to class file
+    Main jasmin = new Main();
+    jasmin.assemble(outputFileName);
   }
 }
