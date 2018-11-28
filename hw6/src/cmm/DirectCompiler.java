@@ -323,6 +323,32 @@ public class DirectCompiler extends CommonVisitor {
 
   // endregion
 
+  // region Control Statement
+
+  @Override
+  public String visitSelection_statement(CmmParser.Selection_statementContext ctx) {
+    String result = visit(ctx.expression());
+    String end = LabelAssigner.getInstance().getLabel();
+
+    result += "iconst_1\n";
+    result += "if_icmpne " + end + "\n";    // if condition is false, go to end or else
+    result += visit(ctx.statement(0));
+
+    if (ctx.statement(1) != null) {
+      String realend = LabelAssigner.getInstance().getLabel();
+      result += "goto " + realend + "\n";
+      result += end + ":\n";
+      result += visit(ctx.statement(1));
+      result += realend + ":\n";
+    } else {
+      result += end + ":\n";
+    }
+
+    return result;
+  }
+
+  // endregion
+
   @Override
   public String visitJump_statement(CmmParser.Jump_statementContext ctx) {
     String kind = ctx.getChild(0).getText();
