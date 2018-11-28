@@ -79,8 +79,8 @@ declaration: declaration_specifiers init_declarator (',' init_declarator)* ';';
 compound_statement: '{' (statement | declaration)* '}';
 expression_statement: expression ';';
 selection_statement: 'if' '(' expression ')' statement ('else' statement)?;
-iteration_statement: 'while' '(' expression ')' statement
-    | 'do' statement 'while' '(' expression ')';
+iteration_statement: 'while' '(' expression ')' statement # WhileStatement
+    | 'do' statement 'while' '(' expression ')' # DoWhileStatement;
 jump_statement: 'continue' ';' | 'break' ';' | 'return' expression? ';';
 statement: compound_statement | expression_statement | selection_statement | iteration_statement | jump_statement;
 
