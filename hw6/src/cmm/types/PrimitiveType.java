@@ -133,4 +133,26 @@ class PrimitiveType {
       return "void";
     }
   }
+  
+  public static class BooleanType extends BaseType {
+	  @Override
+	  public String toJasminType() {
+		  return "B";
+	  }
+	  
+	  @Override 
+	  public String toJasminInstruction() {
+		  return "b";
+	  }
+	  
+	  @Override
+	  int getLevel() {
+		  return -1;
+	  }
+	  
+	  @Override
+	  public String toString() {
+		  return "void";
+	  }  
+  }
 }

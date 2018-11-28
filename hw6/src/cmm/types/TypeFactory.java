@@ -9,6 +9,7 @@ public class TypeFactory {
   public static final BaseType DOUBLE_TYPE = new PrimitiveType.DoubleType();
   public static final BaseType CHAR_TYPE = new PrimitiveType.CharType();
   public static final BaseType VOID_TYPE = new PrimitiveType.VoidType();
+  public static final BaseType BOOLEAN_TYPE = new PrimitiveType.BooleanType();
 
   static BaseType fromString(String typename) {
     switch (typename) {
@@ -24,6 +25,8 @@ public class TypeFactory {
         return CHAR_TYPE;
       case "void":
         return VOID_TYPE;
+      case "bool":
+    	  return BOOLEAN_TYPE;
     }
     return null;
   }
