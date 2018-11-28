@@ -14,12 +14,12 @@ void main() {
 
     int testShr = b >> 3;
     int expectedShr = 2;
-    print (testShr);
-    print (expectedShr);
+    print(testShr);
+    print(expectedShr);
 
     int testXor = a ^ 3;
     int expectedXor = 2;
-    print (testXor);
+    print(testXor);
     print(expectedXor);
 
     int testOr = b | 4;
@@ -33,13 +33,13 @@ void main() {
     print(expectedPriority);
 
     int testPriority2 = a >> (b ^ a) | b << a + b - (b / a);
-    int expectedPriority2 = 32
+    int expectedPriority2 = 32;
     print(testPriority2);
     print(expectedPriority2);
 
 
     int testPriority3 = a | (b ^ a) & b << a * b - (b << a);
-    int expectedPriority3 = 1
+    int expectedPriority3 = 1;
     print(testPriority3);
     print(expectedPriority3);
 
