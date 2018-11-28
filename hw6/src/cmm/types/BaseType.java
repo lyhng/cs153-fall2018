@@ -1,42 +1,61 @@
 package cmm.types;
 
+
+import cmm.LabelAssigner;
+
+import java.util.Arrays;
+
 public abstract class BaseType {
   public abstract String toJasminType();
 
   public abstract String toJasminInstruction();
 
+  private String instr(String op) {
+    return instr(op, "");
+  }
+
+  private String instr(String op, String format, Object... args) {
+    Object[] out = new Object[]{this.toJasminInstruction(), op};
+    out = Arrays.copyOf(out, 2 + args.length);
+    System.arraycopy(args, 0, out, 2, args.length);
+
+    return String.format("%s%s" + format + "\n", out);
+  }
+
   public String load(int index) {
-    if (index <= 3) return String.format("%sload_%d\n", this.toJasminInstruction(), index);
-    return this.toJasminInstruction() + "load " + index + "\n";
+    if (index <= 3)
+      return instr("load", "_%d", index);
+    return instr("load", " %d", index);
   }
 
   public String store(int index) {
-    if (index <= 3) return String.format("%sstore_%d\n", this.toJasminInstruction(), index);
-    return this.toJasminInstruction() + "store " + index + "\n";
+    if (index <= 3)
+      return instr("store", "_%d", index);
+    return instr("store", " %d", index);
   }
 
   public String mul() {
-    return this.toJasminInstruction() + "mul\n";
+    return instr("mul");
   }
 
   public String div() {
-    return this.toJasminInstruction() + "div\n";
+    return instr("div");
   }
 
   public String rem() {
-    return this.toJasminInstruction() + "rem\n";
+    return instr("rem");
   }
 
   public String add() {
-    return this.toJasminInstruction() + "add\n";
+    return instr("add");
   }
 
   public String sub() {
-    return this.toJasminInstruction() + "sub\n";
+    return instr("sub");
   }
 
   public String return_() {
-    return this.toJasminInstruction() + "return\n";
+    return instr("return");
   }
 
   abstract int getLevel();
@@ -59,22 +78,59 @@ public abstract class BaseType {
   }
 
   public String shl() {
-    return this.toJasminInstruction() + "shl\n";
+    return instr("shl");
   }
 
   public String shr() {
-    return this.toJasminInstruction() + "shr\n";
+    return instr("shr");
   }
 
   public String and() {
-    return this.toJasminInstruction() + "and\n";
+    return instr("and");
   }
 
   public String xor() {
-    return this.toJasminInstruction() + "xor\n";
+    return instr("xor");
   }
 
   public String or() {
-    return this.toJasminInstruction() + "or\n";
+    return instr("or");
+  }
+
+  private String relational(String op) {
+    String label = LabelAssigner.getInstance().getLabel();
+    String end = LabelAssigner.getInstance().getLabel();
+
+    return "if_icmp" + op + " " + label + "\n"
+        + "iconst_1\n"
+        + "goto " + end + "\n"
+        + label + ": \n"
+        + "iconst_0\n"
+        + end + ": \n"
+        +"nop\n";
+  }
+
+  public String gt() {
+    return relational("le");
+  }
+
+  public String ge() {
+    return relational("lt");
+  }
+
+  public String lt() {
+    return relational("ge");
+  }
+
+  public String le() {
+    return relational("gt");
+  }
+
+  public String eq() {
+    return relational("ne");
+  }
+
+  public String ne() {
+    return relational("eq");
   }
 }

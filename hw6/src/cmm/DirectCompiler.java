@@ -146,8 +146,7 @@ public class DirectCompiler extends CommonVisitor {
     StringBuilder arguments_ops = new StringBuilder();
     List<CmmParser.ExpressionContext> arguments = ctx.expression();
     for (CmmParser.ExpressionContext argument : arguments) {
-      String result = argument.accept(this);
-      arguments_ops.append(result);
+      arguments_ops.append(argument.accept(this));
     }
 
     SymbolTable table = symbolTable.lookupTable(name);
@@ -201,7 +200,7 @@ public class DirectCompiler extends CommonVisitor {
     if (ctx.additive_operator() != null) {
       String operator = ctx.additive_operator().getText();
 
-      String result = operator_expression(ctx.additive_expression(), ctx.multiplicative_expression(),
+      return operator_expression(ctx.additive_expression(), ctx.multiplicative_expression(),
           ctx.additive_expression().type, ctx.multiplicative_expression().type,
           (type) -> {
             switch (operator) {
@@ -212,10 +211,6 @@ public class DirectCompiler extends CommonVisitor {
             }
             return "";
           });
-
-      System.out.println(result);
-
-      return result;
     }
     return super.visitAdditive_expression(ctx);
   }
@@ -238,6 +233,50 @@ public class DirectCompiler extends CommonVisitor {
           });
     }
     return super.visitShift_expression(ctx);
+  }
+
+  @Override
+  public String visitRelational_expression(CmmParser.Relational_expressionContext ctx) {
+    if (ctx.relational_operator() != null) {
+      String operator = ctx.relational_operator().getText();
+
+      return operator_expression(ctx.relational_expression(), ctx.shift_expression(),
+          ctx.relational_expression().type, ctx.shift_expression().type,
+          (type) -> {
+            switch (operator) {
+              case ">":
+                return type.gt();
+              case ">=":
+                return type.ge();
+              case "<":
+                return type.lt();
+              case "<=":
+                return type.le();
+            }
+            return "";
+          });
+    }
+    return super.visitRelational_expression(ctx);
+  }
+
+  @Override
+  public String visitEquality_expression(CmmParser.Equality_expressionContext ctx) {
+    if (ctx.equality_expression() != null) {
+      String operator = ctx.equality_operator().getText();
+
+      return operator_expression(ctx.equality_expression(), ctx.relational_expression(),
+          ctx.equality_expression().type, ctx.relational_expression().type,
+          (type) -> {
+            switch (operator) {
+              case "==":
+                return type.eq();
+              case "!=":
+                return type.ne();
+            }
+            return "";
+          });
+    }
+    return super.visitEquality_expression(ctx);
   }
 
   @Override
@@ -280,6 +319,32 @@ public class DirectCompiler extends CommonVisitor {
     }
 
     return super.visitAssignment_expression(ctx);
+  }
+
+  // endregion
+
+  // region Control Statement
+
+  @Override
+  public String visitSelection_statement(CmmParser.Selection_statementContext ctx) {
+    String result = visit(ctx.expression());
+    String end = LabelAssigner.getInstance().getLabel();
+
+    result += "iconst_1\n";
+    result += "if_icmpne " + end + "\n";    // if condition is false, go to end or else
+    result += visit(ctx.statement(0));
+
+    if (ctx.statement(1) != null) {
+      String realend = LabelAssigner.getInstance().getLabel();
+      result += "goto " + realend + "\n";
+      result += end + ":\n";
+      result += visit(ctx.statement(1));
+      result += realend + ":\n";
+    } else {
+      result += end + ":\n";
+    }
+
+    return result;
   }
 
   // endregion
