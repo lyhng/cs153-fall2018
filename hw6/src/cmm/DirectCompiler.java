@@ -347,6 +347,38 @@ public class DirectCompiler extends CommonVisitor {
     return result;
   }
 
+  @Override
+  public String visitWhileStatement(CmmParser.WhileStatementContext ctx) {
+    String start = LabelAssigner.getInstance().getLabel();
+    String end = LabelAssigner.getInstance().getLabel();
+    String result = start + ": \n";
+
+    result += visit(ctx.expression());
+    result += "iconst_0\n";
+    result += "if_icmpeq " + end + "\n";    // if expression equal to 0, goto end
+    result += visit(ctx.statement());
+    result += "goto " + start + "\n";
+    result += end + ": \n";
+
+    return result;
+  }
+
+  @Override
+  public String visitDoWhileStatement(CmmParser.DoWhileStatementContext ctx) {
+    String start = LabelAssigner.getInstance().getLabel();
+    String end = LabelAssigner.getInstance().getLabel();
+    String result = start + ": \n";
+
+    result += visit(ctx.statement());
+    result += visit(ctx.expression());
+    result += "iconst_0\n";
+    result += "if_icmpeq " + end + "\n";    // if expression equal to 0, goto end
+    result += "goto " + start + "\n";
+    result += end + ": \n";
+
+    return result;
+  }
+
   // endregion
 
   @Override

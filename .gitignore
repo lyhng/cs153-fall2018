@@ -151,3 +151,5 @@ local.properties
 
 bazel
 bazel-*
+
+*.j
