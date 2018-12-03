@@ -3,7 +3,7 @@ int add(int a, int b) {
     return a + b;
 }
 
-void _main() {
+void main() {
     int a = 1;
     int b = 2 * 8;
     int c = b << 2;
@@ -50,21 +50,4 @@ void _main() {
     } else {
         print(88);
     }
-}
-
-void main() {
-    int i = 0;
-
-    while ( i < 10000 ) {
-        _main();
-
-        i = i + 1;
-    }
-
-    int d = afasdrewr - 10;
-    int a = bb + 1;
-
-    fasdfasdf();
-
-    i();
 }

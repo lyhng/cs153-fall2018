@@ -2,6 +2,7 @@ package cmm.types;
 
 
 import cmm.LabelAssigner;
+import cmm.error.IllegalInstruction;
 
 import java.util.Arrays;
 
@@ -22,39 +23,60 @@ public abstract class BaseType {
     return String.format("%s%s" + format + "\n", out);
   }
 
+  private void ensureInstructionType(String allowed, String message) throws IllegalInstruction {
+    if(allowed.contains(this.toJasminInstruction())) {
+      return;
+    }
+
+    throw new IllegalInstruction(message);
+  }
+
   public String load(int index) {
     if (index <= 3)
       return instr("load", "_%d", index);
     return instr("load", " %d", index);
   }
 
-  public String store(int index) {
+  public String store(int index) throws IllegalInstruction {
+    ensureInstructionType("ilfda", "Invalid variable type");
+
     if (index <= 3)
       return instr("store", "_%d", index);
     return instr("store", " %d", index);
   }
 
-  public String mul() {
+  public String mul() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid operator type");
+
     return instr("mul");
   }
 
-  public String div() {
+  public String div() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid operator type");
+
     return instr("div");
   }
 
-  public String rem() {
+  public String rem() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid operator type");
+
     return instr("rem");
   }
 
-  public String add() {
+  public String add() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid operator type");
+
     return instr("add");
   }
 
-  public String sub() {
+  public String sub() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid operator type");
+
     return instr("sub");
   }
 
-  public String return_() {
+  public String return_() { // throws IllegalInstruction {
+//    ensureInstructionType("ilfda ", "Invalid operator type");
     return instr("return");
   }
 
@@ -77,23 +99,28 @@ public abstract class BaseType {
     return this.canCastTo(o) ? o : this;
   }
 
-  public String shl() {
+  public String shl() throws IllegalInstruction {
+    ensureInstructionType("il", "Invalid operator type");
     return instr("shl");
   }
 
-  public String shr() {
+  public String shr() throws IllegalInstruction {
+    ensureInstructionType("il", "Invalid operator type");
     return instr("shr");
   }
 
-  public String and() {
+  public String and() throws IllegalInstruction {
+    ensureInstructionType("il", "Invalid operator type");
     return instr("and");
   }
 
-  public String xor() {
+  public String xor() throws IllegalInstruction {
+    ensureInstructionType("il", "Invalid operator type");
     return instr("xor");
   }
 
-  public String or() {
+  public String or() throws IllegalInstruction {
+    ensureInstructionType("il", "Invalid operator type");
     return instr("or");
   }
 

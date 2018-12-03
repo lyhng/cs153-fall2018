@@ -100,4 +100,14 @@ public class SymbolTable extends LinkedHashMap<String, Symbol> {
 
     return null;
   }
+
+  public boolean contains(String name) {
+    if (this.containsKey(name)) return true;
+
+    if (this.previous != null) {
+      return this.previous.contains(name);
+    }
+
+    return false;
+  }
 }

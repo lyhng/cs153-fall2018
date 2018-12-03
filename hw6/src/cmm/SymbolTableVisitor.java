@@ -1,24 +1,33 @@
 package cmm;
 
 import cmm.antlr_gen.CmmParser;
+import cmm.error.BaseError;
+import cmm.error.StringError;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.TypeVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SymbolTableVisitor extends CommonVisitor {
   private SymbolTable stack;
+  private List<BaseError> errors;
 
   public SymbolTableVisitor() {
     SymbolTable runtime = RuntimeGenerator.generate();
 
-    stack = new SymbolTable("CmmProgram", runtime);
+    this.stack = new SymbolTable("CmmProgram", runtime);
+    this.errors = new ArrayList<>();
   }
 
   public SymbolTable getStack() {
     return stack;
+  }
+
+  public List<BaseError> getErrors() {
+    return errors;
   }
 
   @Override
@@ -28,6 +37,12 @@ public class SymbolTableVisitor extends CommonVisitor {
 
     for (CmmParser.Init_declaratorContext declarator : declarators) {
       String name = declarator.declarator().accept(this);
+
+      if (stack.contains(name)) {
+        this.errors.add(new StringError(declarator.declarator(), "'%s' is re-declared here.", name));
+        continue;
+      }
+
       stack.put(name, Symbol.createDeclaration(type));
     }
 
@@ -38,6 +53,11 @@ public class SymbolTableVisitor extends CommonVisitor {
   public String visitFunction_declaration(CmmParser.Function_declarationContext ctx) {
     String name = ctx.function_identifier().accept(this);
 
+    if (stack.contains(name)) {
+      this.errors.add(new StringError(ctx.function_identifier(), "function '%s' is re-declared.", name));
+      return "";
+    }
+
     SymbolTable previous = this.stack;
     this.stack = new SymbolTable(name, previous);
 
@@ -46,6 +66,11 @@ public class SymbolTableVisitor extends CommonVisitor {
     for (CmmParser.Function_paramemterContext parameter : parameters) {
       BaseType type = TypeVisitor.getInstance().visit(parameter.declaration_specifiers());
       String parameter_name = parameter.declarator().accept(this);
+
+      if (stack.contains(name)) {
+        this.errors.add(new StringError(parameter.declarator(), "function parameter '%s' is re-declared.", parameter_name));
+        continue;
+      }
 
       this.stack.put(parameter_name, Symbol.createParameter(type, index++));
     }

@@ -152,7 +152,7 @@ class PrimitiveType {
 	  
 	  @Override
 	  public String toString() {
-		  return "void";
+		  return "bool";
 	  }  
   }
 }

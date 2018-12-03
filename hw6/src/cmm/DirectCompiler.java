@@ -3,6 +3,7 @@ package cmm;
 import cmm.antlr_gen.CmmParser;
 import cmm.error.BaseError;
 import cmm.error.DeclarationNotFound;
+import cmm.error.IllegalInstruction;
 import cmm.error.StringError;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
@@ -196,9 +197,13 @@ public class DirectCompiler extends CommonVisitor {
 
   // TODO: postfix & unary operations
 
+  private interface OperatorGeneratorFunction<I, O> {
+    O apply(I input) throws IllegalInstruction;
+  }
+
   private String operator_expression(ParserRuleContext left_ctx, ParserRuleContext right_ctx,
                                      BaseType left_type, BaseType right_type,
-                                     Function<BaseType, String> instruction) {
+                                     OperatorGeneratorFunction<BaseType, String> instruction) {
 //    System.out.printf("left: %s, right: %s\n", left_ctx.getText(), right_ctx.getText());
 //    System.out.printf("left type: %s, right type: %s\n\n", left_type, right_type);
     BaseType type;
@@ -208,7 +213,17 @@ public class DirectCompiler extends CommonVisitor {
       return "";
     }
 
-    return visit(left_ctx) + visit(right_ctx) + instruction.apply(type);
+    String instr;
+
+    try {
+      instr = instruction.apply(type);
+    } catch (IllegalInstruction e) {
+      // TODO: record the error
+      this.errors.add(e.toError(left_ctx.getParent()));
+      return "";
+    }
+
+    return visit(left_ctx) + visit(right_ctx) + instr;
   }
 
   @Override
@@ -353,7 +368,12 @@ public class DirectCompiler extends CommonVisitor {
       String name = ctx.Identifier().toString();
       Symbol symbol = symbolTable.lookup(name);
 
-      return visit(ctx.expression()) + symbol.store();
+      try {
+        return visit(ctx.expression()) + symbol.store();
+      } catch (IllegalInstruction e) {
+        this.errors.add(e.toError(ctx.getParent()));
+        return "";
+      }
     }
 
     return super.visitAssignment_expression(ctx);
@@ -462,7 +482,12 @@ public class DirectCompiler extends CommonVisitor {
         return "";
       }
 
-      return visit(ctx.initializer()) + symbol.store();
+      try {
+        return visit(ctx.initializer()) + symbol.store();
+      } catch (IllegalInstruction illegalInstruction) {
+        this.errors.add(illegalInstruction.toError(ctx.getParent()));
+        return "";
+      }
     }
     return super.visitInit_declarator(ctx);
   }

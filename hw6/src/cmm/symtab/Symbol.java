@@ -1,5 +1,6 @@
 package cmm.symtab;
 
+import cmm.error.IllegalInstruction;
 import cmm.types.BaseType;
 import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
@@ -56,7 +57,7 @@ public class Symbol {
     return this.getType().load(this.index);
   }
 
-  public String store() {
+  public String store() throws IllegalInstruction {
     return this.getType().store(this.index);
   }
 
