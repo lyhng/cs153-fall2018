@@ -16,7 +16,9 @@ public class DirectCompiler extends CommonVisitor {
       ".class public CmmProgram\n" + ".super java/lang/Object\n";
   private static final String PROGRAM_MAIN =
       ".method public static main([Ljava/lang/String;)V\n"
+          + "invokestatic cmm_runtime.CmmRuntime/_start_timer()V\n"
           + "invokestatic CmmProgram/_main()V\n"
+          + "invokestatic cmm_runtime.CmmRuntime/_show_timer()V\n"
           + "return\n"
           + ".end method\n";
   private static final String PROGRAM_TAIL = "\n";
