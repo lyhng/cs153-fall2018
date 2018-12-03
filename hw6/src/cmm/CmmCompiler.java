@@ -70,10 +70,10 @@ public class CmmCompiler {
     List<BaseError> errors = compiler.getErrors();
 
     if (!errors.isEmpty()) {
-      System.out.println("Compilation Error:\n\n");
+      System.err.println("Compilation Error:\n");
       errors.stream()
           .map((err) -> err.toReadableMessage(lines))
-          .forEach(System.out::println);
+          .forEach(System.err::println);
       out.close();
       return;
     }
