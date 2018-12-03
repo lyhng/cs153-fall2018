@@ -1,12 +1,15 @@
 package cmm;
 
 import cmm.antlr_gen.CmmParser;
+import cmm.error.BaseError;
+import cmm.error.StringError;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.FunctionType;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -25,11 +28,16 @@ public class DirectCompiler extends CommonVisitor {
 
   private boolean hasMain;
   private SymbolTable symbolTable;
+  private List<BaseError> errors;
 
   DirectCompiler(SymbolTable symbolTable) {
     this.hasMain = false;
     this.symbolTable = symbolTable;
+    this.errors = new ArrayList<>();
+  }
 
+  public List<BaseError> getErrors() {
+    return errors;
   }
 
   private String buildFields() {
@@ -73,7 +81,7 @@ public class DirectCompiler extends CommonVisitor {
     Symbol function_symbol = this.symbolTable.lookup(name);
 
     if (!(function_symbol.getType() instanceof FunctionType)) {
-      // TODO: throw an exception. trying to create non function type
+      this.errors.add(new StringError(ctx.function_identifier(), "'%s' is not declared as a function.", name));
       return "";
     }
 
@@ -138,7 +146,7 @@ public class DirectCompiler extends CommonVisitor {
     BaseType type = symbol.getType();
 
     if (!(type instanceof FunctionType)) {
-      // TODO: error
+      this.errors.add(new StringError(ctx.function_identifier(), "'%s' is not a function.", name));
       return super.visitFunctionCall(ctx);
     }
 

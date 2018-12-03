@@ -56,6 +56,9 @@
       </extension>
       <method v="2">
         <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_Bazel_Bazel Gen ANTLR" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="cmm-runtime" />
+        </option>
         <option name="Make" enabled="true" />
       </method>
     </configuration>

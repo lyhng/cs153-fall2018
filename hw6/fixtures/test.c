@@ -53,9 +53,6 @@ void _main() {
 }
 
 void main() {
-    int i = 0;
-    while (i < 100) {
-        _main();
-        i = i + 1;
-    }
+    int abcdef = 0;
+    abcdef();
 }
