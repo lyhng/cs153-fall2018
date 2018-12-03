@@ -17,6 +17,13 @@ import java.util.List;
 
 
 public class CmmCompiler {
+  private static void showErrors(String[] lines, List<BaseError> errors) {
+    System.err.println("Compilation Error:\n");
+    errors.stream()
+        .map((err) -> err.toReadableMessage(lines))
+        .forEach(System.err::println);
+  }
+
   public static void main(String[] args) throws Exception {
     String inputFile = null;
     if (args.length > 0) inputFile = args[0];
@@ -64,19 +71,23 @@ public class CmmCompiler {
     ExpressionTypeVisitor exprTypeVisitor = new ExpressionTypeVisitor(table);
     exprTypeVisitor.visit(tree);
 
-    DirectCompiler compiler = new DirectCompiler(table);
-    String result = compiler.visit(tree);
-
-    List<BaseError> errors = compiler.getErrors();
-
+    List<BaseError> errors = exprTypeVisitor.getErrors();
     if (!errors.isEmpty()) {
-      System.err.println("Compilation Error:\n");
-      errors.stream()
-          .map((err) -> err.toReadableMessage(lines))
-          .forEach(System.err::println);
+      showErrors(lines, errors);
       out.close();
       return;
     }
+
+    DirectCompiler compiler = new DirectCompiler(table);
+    String result = compiler.visit(tree);
+
+    errors = compiler.getErrors();
+    if (!errors.isEmpty()) {
+      showErrors(lines, errors);
+      out.close();
+      return;
+    }
+
     out.write(result);
 
     System.out.println("\n\nCompile Result:");

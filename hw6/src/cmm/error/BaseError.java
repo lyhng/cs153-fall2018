@@ -2,6 +2,7 @@ package cmm.error;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public abstract class BaseError {
   private int line;
@@ -25,6 +26,13 @@ public abstract class BaseError {
     this.line = line;
     this.col = col;
     this.length = length;
+  }
+
+  public BaseError(TerminalNode node) {
+    Token token = node.getSymbol();
+    this.line = token.getLine();
+    this.col = token.getCharPositionInLine();
+    this.length = token.getStopIndex() - token.getStartIndex();
   }
 
   abstract String getErrorMessage();

@@ -1,19 +1,29 @@
 package cmm;
 
 import cmm.antlr_gen.CmmParser;
+import cmm.error.BaseError;
+import cmm.error.DeclarationNotFound;
+import cmm.error.StringError;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
 import cmm.types.FunctionType;
 import cmm.types.TypeFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressionTypeVisitor extends CommonVisitor {
+  private final ArrayList<BaseError> errors;
   private SymbolTable symbolTable;
 
   ExpressionTypeVisitor(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
+    this.errors = new ArrayList<>();
+  }
+
+  public ArrayList<BaseError> getErrors() {
+    return errors;
   }
 
   @Override
@@ -39,6 +49,12 @@ public class ExpressionTypeVisitor extends CommonVisitor {
     // Identifier
     String name = ctx.Identifier().toString();
     Symbol symbol = symbolTable.lookup(name);
+
+    if (symbol == null) {
+      this.errors.add(new DeclarationNotFound(ctx.Identifier(), name));
+      return "";
+    }
+
     ctx.type = symbol.getType();
 
     return visit(ctx.Identifier());
@@ -57,10 +73,16 @@ public class ExpressionTypeVisitor extends CommonVisitor {
   public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
     String name = super.visit(ctx.function_identifier());
     Symbol symbol = symbolTable.lookup(name);
+
+    if (symbol == null) {
+      this.errors.add(new DeclarationNotFound(ctx.function_identifier(), name));
+      return "";
+    }
+
     BaseType type = symbol.getType();
 
     if (!(type instanceof FunctionType)) {
-      // TODO: error
+      this.errors.add(new StringError(ctx.function_identifier(), "'%s' is not a function", name));
       return this.defaultResult();
     }
 
@@ -190,8 +212,16 @@ public class ExpressionTypeVisitor extends CommonVisitor {
     String name = super.visit(ctx.function_identifier());
     Symbol function_symbol = this.symbolTable.lookup(name);
 
+    if (function_symbol == null) {
+      this.errors.add(new DeclarationNotFound(ctx.function_identifier(), name));
+      return "";
+    }
+
     if (!(function_symbol.getType() instanceof FunctionType)) {
-      // TODO: throw an exception. trying to create non function type
+      if (!(function_symbol.getType() instanceof FunctionType)) {
+        this.errors.add(new StringError(ctx.function_identifier(), "'%s' is not declared as a function.", name));
+        return "";
+      }
       return "";
     }
 

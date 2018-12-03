@@ -53,6 +53,18 @@ void _main() {
 }
 
 void main() {
-    int abcdef = 0;
-    abcdef();
+    int i = 0;
+
+    while ( i < 10000 ) {
+        _main();
+
+        i = i + 1;
+    }
+
+    int d = afasdrewr - 10;
+    int a = bb + 1;
+
+    fasdfasdf();
+
+    i();
 }

@@ -2,6 +2,7 @@ package cmm;
 
 import cmm.antlr_gen.CmmParser;
 import cmm.error.BaseError;
+import cmm.error.DeclarationNotFound;
 import cmm.error.StringError;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
@@ -80,6 +81,11 @@ public class DirectCompiler extends CommonVisitor {
     String name = super.visit(ctx.function_identifier());
     Symbol function_symbol = this.symbolTable.lookup(name);
 
+    if (function_symbol == null) {
+      this.errors.add(new DeclarationNotFound(ctx.function_identifier(), name));
+      return "";
+    }
+
     if (!(function_symbol.getType() instanceof FunctionType)) {
       this.errors.add(new StringError(ctx.function_identifier(), "'%s' is not declared as a function.", name));
       return "";
@@ -117,7 +123,15 @@ public class DirectCompiler extends CommonVisitor {
       return "iconst_m1\n";
     }
 
-    return "bipush   " + number + "\n";
+    if (n < 127 && n > -128) {
+      // byte
+      return "bipush   " + number + "\n";
+    } else if (n < 32767 && n > -32768) {
+      // short
+      return "sipush   " + number + "\n";
+    }
+    // constant
+    return "ldc    " + number + "\n";
   }
 
   @Override
@@ -134,6 +148,12 @@ public class DirectCompiler extends CommonVisitor {
     if (ctx.Identifier() != null) {
       String name = ctx.Identifier().toString();
       Symbol symbol = symbolTable.lookup(name);
+
+      if (symbol == null) {
+        this.errors.add(new DeclarationNotFound(ctx.Identifier(), name));
+        return "";
+      }
+
       return symbol.load();
     }
     return super.visitPrimary_expression(ctx);
@@ -143,6 +163,12 @@ public class DirectCompiler extends CommonVisitor {
   public String visitFunctionCall(CmmParser.FunctionCallContext ctx) {
     String name = visit(ctx.function_identifier());
     Symbol symbol = symbolTable.lookup(name);
+
+    if (symbol == null) {
+      this.errors.add(new DeclarationNotFound(ctx.function_identifier(), name));
+      return "";
+    }
+
     BaseType type = symbol.getType();
 
     if (!(type instanceof FunctionType)) {
@@ -430,6 +456,11 @@ public class DirectCompiler extends CommonVisitor {
     if (ctx.initializer() != null) {
       String name = super.visitDeclarator(ctx.declarator());
       Symbol symbol = symbolTable.lookup(name);
+
+      if (symbol == null) {
+        this.errors.add(new DeclarationNotFound(ctx.declarator(), name));
+        return "";
+      }
 
       return visit(ctx.initializer()) + symbol.store();
     }
