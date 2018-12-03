@@ -27,6 +27,7 @@ public class DirectCompiler extends CommonVisitor {
   DirectCompiler(SymbolTable symbolTable) {
     this.hasMain = false;
     this.symbolTable = symbolTable;
+
   }
 
   private String buildFields() {
@@ -46,6 +47,7 @@ public class DirectCompiler extends CommonVisitor {
 
   @Override
   public String visitCmm(CmmParser.CmmContext ctx) {
+    LabelAssigner.getInstance().reset();
     StringBuilder builder = new StringBuilder().append(PROGRAM_HEAD);
     builder.append(this.buildFields());
     builder.append(super.visitCmm(ctx));
