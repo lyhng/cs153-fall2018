@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactManager">
+    <artifact type="jar" name="cmm-runtime">
+      <output-path>$PROJECT_DIR$/out/artifacts/cmm_runtime</output-path>
+      <root id="archive" name="cmm-runtime.jar">
+        <element id="module-output" name="cmm-runtime" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/cmm-runtime/META-INF/MANIFEST.MF" />
+        </element>
+      </root>
+    </artifact>
+  </component>
   <component name="GoogleJavaFormatSettings">
     <option name="enabled" value="true" />
   </component>
@@ -24,6 +35,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/cmm-runtime/cmm-runtime.iml" filepath="$PROJECT_DIR$/cmm-runtime/cmm-runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/hw6.iml" filepath="$PROJECT_DIR$/hw6.iml" />
     </modules>
   </component>
