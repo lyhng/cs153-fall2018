@@ -1,0 +1,80 @@
+
+int add(int a, int b) {
+    return a + b;
+}
+
+void main() {
+    int a = 1;
+    int b = 2 * 8;
+    int testAdd = add(a, b);
+    int expectedAdd = 17;
+    print(testAdd);
+    print(expectedAdd);
+
+    int c = b << 2;
+    int testShiftRight = c << 2;
+    int expectedShiftRight = 256;
+    print(testShiftRight);
+    print(expectedShiftRight);
+
+    int testShr = b >> 3;
+    int expectedShr = 2;
+    print(testShr);
+    print(expectedShr);
+
+    int testXor = a ^ 3;
+    int expectedXor = 2;
+    print(testXor);
+    print(expectedXor);
+
+    int testOr = b | 4;
+    int expectedOr = 20;
+    print(testOr);
+    print(expectedOr);
+
+    int testPriority = a | b ^ a & b << a + b * (b / a);
+    int expectedPriority = 17;
+    print(testPriority);
+    print(expectedPriority);
+
+    int testPriority2 = a >> (b ^ a) | b << a + b - (b / a);
+    int expectedPriority2 = 32;
+    print(testPriority2);
+    print(expectedPriority2);
+
+
+    int testPriority3 = a | (b ^ a) & b << a * b - (b << a);
+    int expectedPriority3 = 1;
+    print(testPriority3);
+    print(expectedPriority3);
+
+    int testEquality = c == 64;
+    int expectedEquality = 1;
+    print(testEquality);
+    print(expectedEquality);
+
+    if (c % 2 == 0) {
+        print(99);
+    } else {
+        print(88);
+    }
+
+    int counter = 0;
+    while (counter < 10) {
+        print(10 - counter);
+        counter = counter + 1;
+    }
+
+    counter = 0;
+    while (counter < 0) {
+        print(10 - counter);
+        counter = counter + 1;
+    }
+
+    counter = 0;
+    do {
+        print(10 - counter);
+        counter = counter + 1;
+    } while (counter < 0)
+
+}
