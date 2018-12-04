@@ -6,11 +6,16 @@ int add(int a, int b) {
 void main() {
     int a = 1;
     int b = 2 * 8;
-    int c = b << 2;
+    int testAdd = add(a, b);
+    int expectedAdd = 17;
+    print(testAdd);
+    print(expectedAdd);
 
-    print(c << 2);
-    print(c);
-    print((c + 1) & 1);
+    int c = b << 2;
+    int testShiftRight = c << 2;
+    int expectedShiftRight = 256;
+    print(testShiftRight);
+    print(expectedShiftRight);
 
     int testShr = b >> 3;
     int expectedShr = 2;
@@ -43,11 +48,33 @@ void main() {
     print(testPriority3);
     print(expectedPriority3);
 
-    print(c == 64);
+    int testEquality = c == 64;
+    int expectedEquality = 1;
+    print(testEquality);
+    print(expectedEquality);
 
     if (c % 2 == 0) {
         print(99);
     } else {
         print(88);
     }
+
+    int counter = 0;
+    while (counter < 10) {
+        print(10 - counter);
+        counter = counter + 1;
+    }
+
+    counter = 0;
+    while (counter < 0) {
+        print(10 - counter);
+        counter = counter + 1;
+    }
+
+    counter = 0;
+    do {
+        print(10 - counter);
+        counter = counter + 1;
+    } while (counter < 0)
+
 }
