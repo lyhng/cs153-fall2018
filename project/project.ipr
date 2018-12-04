@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactManager">
+    <artifact type="jar" name="cmm-runtime">
+      <output-path>$PROJECT_DIR$/out/artifacts/cmm_runtime</output-path>
+      <root id="archive" name="cmm-runtime.jar">
+        <element id="module-output" name="cmm-runtime" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/cmm-runtime/META-INF/MANIFEST.MF" />
+        </element>
+      </root>
+    </artifact>
+    <artifact type="jar" build-on-make="true" name="project:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/project_jar</output-path>
+      <root id="archive" name="project.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="cmm-runtime" />
+        <element id="module-output" name="project" />
+        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.7.1/antlr4-runtime-4.7.1.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/vendor/jasmin.jar" path-in-jar="/" />
+      </root>
+    </artifact>
+  </component>
+  <component name="GoogleJavaFormatSettings">
+    <option name="enabled" value="true" />
+  </component>
+  <component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+      <option name="myName" value="Project Default" />
+    </profile>
+    <version value="1.0" />
+  </component>
+  <component name="Kotlin2JsCompilerArguments">
+    <option name="sourceMapEmbedSources" />
+  </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="fanzeyi">
+      <words>
+        <w>declarator</w>
+        <w>declarators</w>
+        <w>invokestatic</w>
+        <w>pprint</w>
+      </words>
+    </dictionary>
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cmm-runtime/cmm-runtime.iml" filepath="$PROJECT_DIR$/cmm-runtime/cmm-runtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project.iml" filepath="$PROJECT_DIR$/project.iml" />
+    </modules>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="ScalaSbtSettings">
+    <option name="customVMPath" />
+  </component>
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+  </component>
+  <component name="libraryTable">
+    <library name="jasmin">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/vendor/jasmin.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="org.antlr:antlr4-runtime:4.7.1" type="repository">
+      <properties maven-id="org.antlr:antlr4-runtime:4.7.1" />
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.7.1/antlr4-runtime-4.7.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
+</project>
