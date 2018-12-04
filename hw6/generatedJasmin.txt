@@ -1,0 +1,315 @@
+.class public CmmProgram
+.super java/lang/Object
+.method private static add(II)I
+.limit locals 3
+.limit stack 3
+; returna+b;
+iload_0
+iload_1
+iadd
+ireturn
+.end method
+.method private static _main()V
+.limit locals 23
+.limit stack 23
+; inta=1;
+iconst_1
+istore_0
+; intb=2*8;
+iconst_2
+bipush   8
+imul
+istore_1
+; inttestAdd=add(a,b);
+iload_0
+iload_1
+invokestatic CmmProgram/add(II)I
+istore_2
+; intexpectedAdd=17;
+bipush   17
+istore_3
+; print(testAdd);
+iload_2
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedAdd);
+iload_3
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; intc=b<<2;
+iload_1
+iconst_2
+ishl
+istore 4
+; inttestShiftRight=c<<2;
+iload 4
+iconst_2
+ishl
+istore 5
+; intexpectedShiftRight=256;
+sipush   256
+istore 6
+; print(testShiftRight);
+iload 5
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedShiftRight);
+iload 6
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestShr=b>>3;
+iload_1
+iconst_3
+ishr
+istore 7
+; intexpectedShr=2;
+iconst_2
+istore 8
+; print(testShr);
+iload 7
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedShr);
+iload 8
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestXor=a^3;
+iload_0
+iconst_3
+ixor
+istore 9
+; intexpectedXor=2;
+iconst_2
+istore 10
+; print(testXor);
+iload 9
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedXor);
+iload 10
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestOr=b|4;
+iload_1
+iconst_4
+ior
+istore 11
+; intexpectedOr=20;
+bipush   20
+istore 12
+; print(testOr);
+iload 11
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedOr);
+iload 12
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestPriority=a|b^a&b<<a+b*(b/a);
+iload_0
+iload_1
+iload_0
+iload_1
+iload_0
+iload_1
+iload_1
+iload_0
+idiv
+imul
+iadd
+ishl
+iand
+ixor
+ior
+istore 13
+; intexpectedPriority=17;
+bipush   17
+istore 14
+; print(testPriority);
+iload 13
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedPriority);
+iload 14
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestPriority2=a>>(b^a)|b<<a+b-(b/a);
+iload_0
+iload_1
+iload_0
+ixor
+ishr
+iload_1
+iload_0
+iload_1
+iadd
+iload_1
+iload_0
+idiv
+isub
+ishl
+ior
+istore 15
+; intexpectedPriority2=32;
+bipush   32
+istore 16
+; print(testPriority2);
+iload 15
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedPriority2);
+iload 16
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestPriority3=a|(b^a)&b<<a*b-(b<<a);
+iload_0
+iload_1
+iload_0
+ixor
+iload_1
+iload_0
+iload_1
+imul
+iload_1
+iload_0
+ishl
+isub
+ishl
+iand
+ior
+istore 17
+; intexpectedPriority3=1;
+iconst_1
+istore 18
+; print(testPriority3);
+iload 17
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedPriority3);
+iload 18
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; inttestEquality=c==64;
+iload 4
+bipush   64
+if_icmpne L00001
+iconst_1
+goto L00002
+L00001: 
+iconst_0
+L00002: 
+nop
+istore 19
+; intexpectedEquality=1;
+iconst_1
+istore 20
+; print(testEquality);
+iload 19
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; print(expectedEquality);
+iload 20
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; if(c%2==0){print(99);}else{print(88);}
+iload 4
+iconst_2
+irem
+iconst_0
+if_icmpne L00003
+iconst_1
+goto L00004
+L00003: 
+iconst_0
+L00004: 
+nop
+iconst_1
+if_icmpne L00005
+; {print(99);}
+; print(99);
+bipush   99
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+goto L00006
+L00005:
+; {print(88);}
+; print(88);
+bipush   88
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+L00006:
+; intcounter=0;
+iconst_0
+istore 21
+; while(counter<10){print(10-counter);counter=counter+1;}
+L00007: 
+iload 21
+bipush   10
+if_icmpge L00009
+iconst_1
+goto L00010
+L00009: 
+iconst_0
+L00010: 
+nop
+iconst_0
+if_icmpeq L00008
+; {print(10-counter);counter=counter+1;}
+; print(10-counter);
+bipush   10
+iload 21
+isub
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; counter=counter+1;
+iload 21
+iconst_1
+iadd
+istore 21
+goto L00007
+L00008: 
+; counter=0;
+iconst_0
+istore 21
+; while(counter<0){print(10-counter);counter=counter+1;}
+L00011: 
+iload 21
+iconst_0
+if_icmpge L00013
+iconst_1
+goto L00014
+L00013: 
+iconst_0
+L00014: 
+nop
+iconst_0
+if_icmpeq L00012
+; {print(10-counter);counter=counter+1;}
+; print(10-counter);
+bipush   10
+iload 21
+isub
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; counter=counter+1;
+iload 21
+iconst_1
+iadd
+istore 21
+goto L00011
+L00012: 
+; counter=0;
+iconst_0
+istore 21
+; do{print(10-counter);counter=counter+1;}while(counter<0)
+L00015: 
+; {print(10-counter);counter=counter+1;}
+; print(10-counter);
+bipush   10
+iload 21
+isub
+invokestatic cmm_runtime/CmmRuntime/print(I)V
+; counter=counter+1;
+iload 21
+iconst_1
+iadd
+istore 21
+iload 21
+iconst_0
+if_icmpge L00017
+iconst_1
+goto L00018
+L00017: 
+iconst_0
+L00018: 
+nop
+iconst_0
+if_icmpeq L00016
+goto L00015
+L00016: 
+return
+.end method
+.method public static main([Ljava/lang/String;)V
+invokestatic cmm_runtime.CmmRuntime/_start_timer()V
+invokestatic CmmProgram/_main()V
+invokestatic cmm_runtime.CmmRuntime/_show_timer()V
+return
+.end method
