@@ -45,6 +45,12 @@ public abstract class BaseType {
     return instr("store", " %d", index);
   }
 
+  public String neg() throws IllegalInstruction {
+    ensureInstructionType("ilfd", "Invalid variable type");
+
+    return instr("neg");
+  }
+
   public String mul() throws IllegalInstruction {
     ensureInstructionType("ilfd", "Invalid operator type");
 

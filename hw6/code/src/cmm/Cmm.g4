@@ -101,7 +101,7 @@ fragment NonzeroDigit: [1-9];
 fragment ExponentFlag: 'e' | 'E';
 fragment ExponentPart: ExponentFlag Sign? Digit+;
 
-DecimalNumber: (NonzeroDigit Digit* | Digit);
+DecimalNumber: Sign? (NonzeroDigit Digit* | Digit);
 FloatingNumber: DecimalNumber '.' Digit+ ExponentPart?;
 
 // String

@@ -116,23 +116,24 @@ public class DirectCompiler extends CommonVisitor {
   @Override
   public String visitDecimalNumber(CmmParser.DecimalNumberContext ctx) {
     String number = ctx.DecimalNumber().toString();
+    System.out.println(number);
     int n = Integer.valueOf(number);
 
     if (n <= 5 && n >= 0) {
-      return "iconst_" + number + "\n";
+      return "iconst_" + n + "\n";
     } else if (n == -1) {
       return "iconst_m1\n";
     }
 
     if (n < 127 && n > -128) {
       // byte
-      return "bipush   " + number + "\n";
+      return "bipush   " + n + "\n";
     } else if (n < 32767 && n > -32768) {
       // short
-      return "sipush   " + number + "\n";
+      return "sipush   " + n + "\n";
     }
     // constant
-    return "ldc    " + number + "\n";
+    return "ldc    " + n + "\n";
   }
 
   @Override
@@ -196,6 +197,24 @@ public class DirectCompiler extends CommonVisitor {
   }
 
   // TODO: postfix & unary operations
+
+
+  @Override
+  public String visitUnary_expression(CmmParser.Unary_expressionContext ctx) {
+    if (ctx.unary_expression() != null && ctx.unary_operator() != null) {
+      String operator = ctx.unary_operator().getText();
+
+      if (operator.equals("-")) {
+        try {
+          return visit(ctx.unary_expression()) + ctx.unary_expression().type.neg();
+        } catch (IllegalInstruction illegalInstruction) {
+          this.errors.add(illegalInstruction.toError(ctx));
+          return "";
+        }
+      }
+    }
+    return super.visitUnary_expression(ctx);
+  }
 
   private interface OperatorGeneratorFunction<I, O> {
     O apply(I input) throws IllegalInstruction;
@@ -453,7 +472,8 @@ public class DirectCompiler extends CommonVisitor {
           }
 
           // TODO: return based on function return type
-          result += ctx.expression().type.return_();
+          if (ctx.expression() != null) result += ctx.expression().type.return_();
+          else result += "return\n";
 
           return result;
         }

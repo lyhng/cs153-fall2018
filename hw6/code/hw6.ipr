@@ -58,7 +58,7 @@
     <configuration default="false" name="CmmCompiler" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="cmm.CmmCompiler" />
       <module name="hw6" />
-      <option name="PROGRAM_PARAMETERS" value="fixtures/sample.cmm" />
+      <option name="PROGRAM_PARAMETERS" value="fixtures/sierpinski.c" />
       <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
       <extension name="coverage">
         <pattern>

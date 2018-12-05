@@ -61,13 +61,15 @@ public class TurtleGraphics extends JPanel {
   private Turtle turtle;
   private ArrayList<Shape> scene;
 
+  private JFrame frame;
+
   public TurtleGraphics() {
     this.scene = new ArrayList<>();
     this.turtle = new Turtle(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 0);
+    this.frame = new JFrame("Turtle Graphics");
   }
 
   public void start() {
-    JFrame frame = new JFrame("Turtle Graphics");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setResizable(false);
     frame.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -76,6 +78,9 @@ public class TurtleGraphics extends JPanel {
     this.setOpaque(true);
     this.setBackground(Color.WHITE);
     frame.getContentPane().add(BorderLayout.CENTER, this);
+  }
+
+  public void show_frame() {
     frame.setVisible(true);
   }
 
@@ -134,6 +139,7 @@ public class TurtleGraphics extends JPanel {
     g2d.setBackground(Color.WHITE);
     g2d.setColor(turtle.color);
 
+
     // Hack to draw arrow head:
     // Rotate canvas -> draw turtle -> rotate back
     g2d.rotate(-turtle.angle, turtle.x, turtle.y);
@@ -146,3 +152,4 @@ public class TurtleGraphics extends JPanel {
     }
   }
 }
+
