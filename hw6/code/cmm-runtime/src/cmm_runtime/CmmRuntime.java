@@ -29,10 +29,10 @@ public class CmmRuntime {
   }
 
   public static void _show_timer() {
+    if (turtleGraphics.isStarted()) turtleGraphics.refresh();
+
     long current = System.currentTimeMillis();
     long duration = current - CmmRuntime.start;
-
-    if (turtleGraphics.isStarted()) turtleGraphics.refresh();
 
     System.out.printf("Total run time: %dms\n", duration);
   }

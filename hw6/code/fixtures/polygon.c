@@ -12,15 +12,20 @@ void polygon(int size, int num) {
 
 void main() {
   start_logo();
+  animate();
+
   int i, j;
+  int angle = 8;
 
   i = 3;
-  while (i <= 5) {
-    j = 4;
-    while (j <= 360) {
-      right(4);
-      polygon(200, i);
-      j = j + 1;
+  while (i <= 9) {
+    if (i != 7) {
+      j = 1;
+      while (j <= 360 / angle) {
+        right(angle);
+        polygon(130, i);
+        j = j + 1;
+      }
     }
     i = i + 1;
   }
