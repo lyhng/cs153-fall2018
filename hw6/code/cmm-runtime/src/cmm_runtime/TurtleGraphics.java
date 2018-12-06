@@ -1,13 +1,12 @@
 package cmm_runtime;
 
-import javafx.scene.Scene;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class TurtleGraphics extends JPanel {
 
@@ -62,14 +61,32 @@ public class TurtleGraphics extends JPanel {
   private ArrayList<Shape> scene;
 
   private JFrame frame;
+  private boolean started;
+
+  private boolean animated;
 
   public TurtleGraphics() {
     this.scene = new ArrayList<>();
     this.turtle = new Turtle(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 0);
     this.frame = new JFrame("Turtle Graphics");
+    this.started = false;
   }
 
+  public boolean isStarted() {
+    return started;
+  }
+
+  public boolean isAnimated() {
+    return animated;
+  }
+
+  public void setAnimated() {
+    this.animated = true;
+  }
+
+
   public void start() {
+    this.started = true;
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setResizable(false);
     frame.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -129,6 +146,11 @@ public class TurtleGraphics extends JPanel {
     turtle.angle = 0;
   }
 
+  public void refresh() {
+    this.validate();
+    this.repaint();
+  }
+
   @Override
   public void paintComponent(Graphics g) {
     Graphics2D g2d = (Graphics2D)g;
@@ -147,8 +169,11 @@ public class TurtleGraphics extends JPanel {
     g2d.rotate(turtle.angle, turtle.x, turtle.y);
 
     // Draw scene
-    for (Shape s : scene) {
-      g2d.draw(s);
+    try {
+      for (Shape s : scene) {
+        g2d.draw(s);
+      }
+    } catch (ConcurrentModificationException ignored) {
     }
   }
 }

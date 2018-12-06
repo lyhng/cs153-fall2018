@@ -1,8 +1,6 @@
 package cmm_runtime;
 
 
-import java.awt.geom.Rectangle2D;
-
 public class CmmRuntime {
   public static void print(int x) {
     System.out.print(x);
@@ -34,7 +32,7 @@ public class CmmRuntime {
     long current = System.currentTimeMillis();
     long duration = current - CmmRuntime.start;
 
-    turtleGraphics.show_frame();
+    if (turtleGraphics.isStarted()) turtleGraphics.refresh();
 
     System.out.printf("Total run time: %dms\n", duration);
   }
@@ -45,24 +43,42 @@ public class CmmRuntime {
 
   public static void start_logo() {
     turtleGraphics.start();
+    turtleGraphics.show_frame();
   }  // initialize the GUI canvas here. We can ask the user to run this before using any of the following commands
 
+  public static void animate() {
+    turtleGraphics.setAnimated();
+  }
 
   public static void forward(int distance) {
     turtleGraphics.move(distance);
+    refresh();
   }  // move the turtle by distance
 
   public static void right(int angle) {
     turtleGraphics.rotate(-angle);
+    refresh();
   } // clockwise rotating
 
   public static void left(int angle) {
     turtleGraphics.rotate(angle);
+    refresh();
   }  // counter-clockwise rotating
 
   public static void square(int length) {
     turtleGraphics.drawSquare(length);
+    refresh();
   }  // draw a square with the current coordinate as the left bottom corner of the square
+
+  private static void refresh() {
+    turtleGraphics.refresh();
+    if (turtleGraphics.isAnimated()) {
+      try {
+        Thread.sleep(5);
+      } catch (InterruptedException e) {
+      }
+    }
+  }
 
   public static void wait(int seconds) {
     try {
@@ -76,26 +92,32 @@ public class CmmRuntime {
   public static void clearscreen() {
     turtleGraphics.clear();
     turtleGraphics.resetTurtle();
+    refresh();
   }  // reset, clear the screen and set turtle to origin.
 
   public static void penup() {
     turtleGraphics.setPen(false);
+    refresh();
   }    // stop leaving trace on route, i.e. disable drawing only move the turtle
 
   public static void pendown() {
     turtleGraphics.setPen(true);
+    refresh();
   }   // start leaving trace on route, i.e. enable drawing
 
   public static void hideturtle() {
     turtleGraphics.setTurtleVisible(false);
+    refresh();
   }  // make the turtle invisible
 
   public static void showturtle() {
     turtleGraphics.setTurtleVisible(true);
+    refresh();
   } // make the turtle visible
 
   public static void home() {
     turtleGraphics.resetTurtle();
+    refresh();
   } // set turtle to origin, but not clear the screen
 
   static void curve(int order, int length, int angle) {
@@ -123,6 +145,7 @@ public class CmmRuntime {
 
   public static void main(String[] args) {
     start_logo();
+    animate();
     penup();
     right(180);
     forward(240);
@@ -130,7 +153,7 @@ public class CmmRuntime {
     forward(140);
     left(90);
     pendown();
-    sierpinski(1, 600);
+    sierpinski(8, 600);
     turtleGraphics.show_frame();
   }
 }

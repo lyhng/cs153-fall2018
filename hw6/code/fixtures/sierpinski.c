@@ -1,12 +1,5 @@
 
 void curve(int order, int length, int angle) {
-  print(order);
-  space();
-  print(length);
-  space();
-  print(angle);
-  println();
-
   if (order == 0) {
     forward(length);
   } else {
@@ -19,14 +12,7 @@ void curve(int order, int length, int angle) {
 }
 
 void sierpinski(int order, int length) {
-  print(order);
-  space();
-  print(length);
-  space();
-  print(order & 1);
-  println();
   if ((order & 1) == 0) {
-    print(1234);
     curve(order, length, 60);
   } else {
     right(60);
@@ -37,6 +23,7 @@ void sierpinski(int order, int length) {
 void main() {
   int i;
   start_logo();
+  animate();
   penup();
   right(180);
   forward(240);
