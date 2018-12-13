@@ -30,11 +30,27 @@ genrule(
   cmd = "antlr -no-listener -visitor -o `dirname $(location src/pcl/antlr_gen/Pcl2.interp)` -Xexact-output-dir -package pcl.antlr_gen $<"
 )
 
+java_import(
+  name = "jasmin",
+  jars = [
+    "vendor/jasmin.jar"
+  ]
+)
+
+java_library(
+  name = "cmm-runtime",
+  srcs = glob(["cmm-runtime/src/**/*.java"])
+)
+
 java_binary(
   name = "cmm",
   srcs = glob(["src/**/*.java"]) + [":cmm.antlr_gen"],
   main_class = "cmm.CmmCompiler",
   deps = [
     "@antlr4_runtime//jar",
+    ":jasmin"
+  ],
+  runtime_deps = [
+    ":cmm-runtime"
   ]
 )

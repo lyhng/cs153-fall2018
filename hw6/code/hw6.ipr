@@ -55,7 +55,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="CmmCompiler" type="Application" factoryName="Application" nameIsGenerated="true">
+    <configuration default="false" name="CmmCompiler - Polygon" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="cmm.CmmCompiler" />
       <module name="hw6" />
       <option name="PROGRAM_PARAMETERS" value="fixtures/polygon.c" />

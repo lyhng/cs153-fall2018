@@ -3,11 +3,11 @@ package cmm_runtime;
 
 public class CmmRuntime {
   public static void print(int x) {
-    System.out.print(x);
+    System.out.println(x);
   }
 
   public static void space() {
-    System.out.print(" ");
+    System.out.println(" ");
   }
 
   public static void println() {
@@ -29,7 +29,7 @@ public class CmmRuntime {
   }
 
   public static void _show_timer() {
-    if (turtleGraphics.isStarted()) turtleGraphics.refresh();
+    if (turtleGraphics != null) turtleGraphics.refresh();
 
     long current = System.currentTimeMillis();
     long duration = current - CmmRuntime.start;
@@ -39,9 +39,10 @@ public class CmmRuntime {
 
   /* LOGO */
 
-  private static TurtleGraphics turtleGraphics = new TurtleGraphics();
+  private static TurtleGraphics turtleGraphics;
 
   public static void start_logo() {
+    turtleGraphics = new TurtleGraphics();
     turtleGraphics.start();
     turtleGraphics.show_frame();
   }  // initialize the GUI canvas here. We can ask the user to run this before using any of the following commands
@@ -119,41 +120,4 @@ public class CmmRuntime {
     turtleGraphics.resetTurtle();
     refresh();
   } // set turtle to origin, but not clear the screen
-
-  static void curve(int order, int length, int angle) {
-    System.out.printf("%d %d %d\n", order ,length, angle);
-    if (order == 0) {
-      forward(length);
-    } else {
-      curve(order - 1, length / 2, -angle);
-      right(angle);
-      curve(order - 1, length / 2, +angle);
-      right(angle);
-      curve(order - 1, length / 2, - angle);
-    }
-  }
-
-  static void sierpinski(int order, int length) {
-    System.out.printf("%d %d %d\n", order, length, (order & 1));
-    if ((order & 1) == 0) {
-      curve(order, length, +60);
-    } else {
-      right(+60);
-      curve(order, length, -60);
-    }
-  }
-
-  public static void main(String[] args) {
-    start_logo();
-    animate();
-    penup();
-    right(180);
-    forward(240);
-    left(90);
-    forward(140);
-    left(90);
-    pendown();
-    sierpinski(8, 600);
-    turtleGraphics.show_frame();
-  }
 }

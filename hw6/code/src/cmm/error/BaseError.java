@@ -9,7 +9,31 @@ public abstract class BaseError {
   private int col;
   private int length;
 
+  public BaseError(int line, int col, int length) {
+    this.line = line;
+    this.col = col;
+    this.length = length;
+  }
+
   public BaseError(ParserRuleContext context) {
+    this.setParserRuleContext(context);
+  }
+
+  public BaseError(TerminalNode node) {
+    this.setTerminalNode(node);
+  }
+
+  public BaseError() {
+  }
+
+  public void setTerminalNode(TerminalNode node) {
+    Token token = node.getSymbol();
+    this.line = token.getLine();
+    this.col = token.getCharPositionInLine();
+    this.length = token.getStopIndex() - token.getStartIndex();
+  }
+
+  public void setParserRuleContext(ParserRuleContext context) {
     Token start = context.start;
     Token stop = context.stop;
 
@@ -20,19 +44,6 @@ public abstract class BaseError {
     } else {
       // TODO: figure out way to show error message for multi-line errors
     }
-  }
-
-  public BaseError(int line, int col, int length) {
-    this.line = line;
-    this.col = col;
-    this.length = length;
-  }
-
-  public BaseError(TerminalNode node) {
-    Token token = node.getSymbol();
-    this.line = token.getLine();
-    this.col = token.getCharPositionInLine();
-    this.length = token.getStopIndex() - token.getStartIndex();
   }
 
   abstract String getErrorMessage();

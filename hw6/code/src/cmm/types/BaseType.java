@@ -3,6 +3,7 @@ package cmm.types;
 
 import cmm.LabelAssigner;
 import cmm.error.IllegalInstruction;
+import cmm.error.TypeError;
 
 import java.util.Arrays;
 
@@ -88,21 +89,31 @@ public abstract class BaseType {
 
   abstract int getLevel();
 
-  public boolean canCastTo(BaseType o) throws Exception {
-    int level_a = this.getLevel();
-    int level_b = o.getLevel();
+//  public boolean canCastTo(BaseType o) throws TypeError {
+//    int level_a = this.getLevel();
+//    int level_b = o.getLevel();
+//
+//    if (level_a == level_b) return true;
+//
+//    if (level_a != -1 && level_b != -1) {
+//      return level_a < level_b;
+//    }
+//
+//    throw new TypeError(this, o);
+//  }
 
-    if (level_a == level_b) return true;
+  public BaseType tryCastTo(BaseType o) throws TypeError {
+    int l1 = this.getLevel();
+    int l2 = o.getLevel();
 
-    if (level_a != -1 && level_b != -1) {
-      return level_a < level_b;
+    if ((l1 == 0 || l1 == 1) && (l2 == 0 || l2 == 1)) {
+      // integer
+      return l1 > l2 ? this : o;
+    } else if ((l1 == 2 || l1 == 3) && (l2 == 2 || l2 == 3))  {
+      return l1 > l2 ? this : o;
     }
 
-    throw new Exception();
-  }
-
-  public BaseType tryCastTo(BaseType o) throws Exception {
-    return this.canCastTo(o) ? o : this;
+    throw new TypeError(o,this);
   }
 
   public String shl() throws IllegalInstruction {

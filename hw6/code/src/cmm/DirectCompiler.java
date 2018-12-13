@@ -1,10 +1,7 @@
 package cmm;
 
 import cmm.antlr_gen.CmmParser;
-import cmm.error.BaseError;
-import cmm.error.DeclarationNotFound;
-import cmm.error.IllegalInstruction;
-import cmm.error.StringError;
+import cmm.error.*;
 import cmm.symtab.Symbol;
 import cmm.symtab.SymbolTable;
 import cmm.types.BaseType;
@@ -228,7 +225,8 @@ public class DirectCompiler extends CommonVisitor {
     BaseType type;
     try {
       type = left_type.tryCastTo(right_type);
-    } catch (Exception e) {
+    } catch (TypeError e) {
+      this.errors.add(e.toError(right_ctx));
       return "";
     }
 
@@ -388,7 +386,11 @@ public class DirectCompiler extends CommonVisitor {
       Symbol symbol = symbolTable.lookup(name);
 
       try {
+        ctx.expression().type.tryCastTo(symbol.getType());
         return visit(ctx.expression()) + symbol.store();
+      } catch (TypeError e) {
+        this.errors.add(e.toError(ctx.expression()));
+        return "";
       } catch (IllegalInstruction e) {
         this.errors.add(e.toError(ctx.getParent()));
         return "";
@@ -502,10 +504,15 @@ public class DirectCompiler extends CommonVisitor {
         return "";
       }
 
+
       try {
+        ctx.initializer().assignment_expression().type.tryCastTo(symbol.getType());
         return visit(ctx.initializer()) + symbol.store();
       } catch (IllegalInstruction illegalInstruction) {
         this.errors.add(illegalInstruction.toError(ctx.getParent()));
+        return "";
+      } catch (TypeError e) {
+        this.errors.add(e.toError(ctx.initializer()));
         return "";
       }
     }
